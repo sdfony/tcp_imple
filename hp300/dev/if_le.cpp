@@ -4,19 +4,61 @@
 #include <string.h>
 #include "if_queue.h"
 
-#define ETHERMTU 1500
-#define senderr(e) {error = e; goto bad;}
-extern u_char etherbroadcastaddr[6];
+/* offsets for:	   ID,   REGS,    MEM,  NVRAM */
+int	lestd[] = { 0, 0x4000, 0x8000, 0xC008 };
 
-struct le_softc
-{
-    struct arpcom sc_ac;
-#define sc_if sc_ac.ac_if
-#define sc_addr sc_ac.ac_enaddr
-    // device-specific members
+int	leattach();
+struct	driver ledriver = {
+	leattach, "le",
 };
 
-struct le_softc le_softc[NLE];
+struct	isr le_isr[NLE];
+int	ledebug = 0;		/* console error messages */
+
+int	leintr(), leinit(), leioctl(), lestart(), ether_output(), lereset();
+struct	mbuf *m_devget();
+extern	struct ifnet loif;
+
+/*
+ * Ethernet software status per interface.
+ *
+ * Each interface is referenced by a network interface structure,
+ * le_if, which the routing code uses to locate the interface.
+ * This structure contains the output queue for the interface, its address, ...
+ */
+struct	le_softc {
+	struct	arpcom sc_ac;	/* common Ethernet structures */
+#define	sc_if	sc_ac.ac_if	/* network-visible interface */
+#define	sc_addr	sc_ac.ac_enaddr	/* hardware Ethernet address */
+	struct	lereg0 *sc_r0;	/* DIO registers */
+	struct	lereg1 *sc_r1;	/* LANCE registers */
+	struct	lereg2 *sc_r2;	/* dual-port RAM */
+	int	sc_rmd;		/* predicted next rmd to process */
+	int	sc_tmd;		/* next available tmd */
+	int	sc_txcnt;	/* # of transmit buffers in use */
+	/* stats */
+	int	sc_runt;
+	int	sc_jab;
+	int	sc_merr;
+	int	sc_babl;
+	int	sc_cerr;
+	int	sc_miss;
+	int	sc_rown;
+	int	sc_xown;
+	int	sc_xown2;
+	int	sc_uflo;
+	int	sc_rxlen;
+	int	sc_rxoff;
+	int	sc_txoff;
+	int	sc_busy;
+	short	sc_iflags;
+} le_softc[NLE];
+
+/* access LANCE registers */
+#define	LERDWR(cntl, src, dst) \
+	do { \
+		(dst) = (src); \
+	} while (((cntl)->ler0_status & LE_ACK) == 0);
 
 
 struct hp_device
@@ -90,5 +132,63 @@ int ether_output(struct ifnet *ifp,
 }
 
 void ether_attach(struct ifnet *ifp)
+{
+}
+
+/*
+ * Setup the logical address filter
+ */
+void
+lesetladrf(sc)
+	register struct le_softc *sc;
+{
+}
+
+int ledrinit(ler2, le)
+	register struct lereg2 *ler2;
+	register struct le_softc *le;
+{
+}
+
+int leintr(unit)
+	register int unit;
+{
+
+}
+
+/*
+ * Ethernet interface transmitter interrupt.
+ * Start another output if more data to send.
+ */
+int lexint(unit)
+	register int unit;
+{
+
+}
+
+/*
+ * Ethernet interface receiver interrupt.
+ * If input error just drop packet.
+ * Decapsulate packet based on type and pass to type specific
+ * higher-level input routine.
+ */
+int lerint(unit)
+	int unit;
+{
+}
+
+/*
+ * Routine to copy from mbuf chain to transmit
+ * buffer in board local memory.
+ */
+int leput(lebuf, m)
+	register char *lebuf;
+	register struct mbuf *m;
+{
+}
+
+leerror(unit, stat)
+	int unit;
+	int stat;
 {
 }

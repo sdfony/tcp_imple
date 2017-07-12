@@ -1,4 +1,4 @@
-#include "if_net.h"
+#include "if.h"
 
 #define LOMTU 1536
 
@@ -34,4 +34,13 @@ int looutput(struct ifnet *ifp,
 	struct rtentry *rtp)
 {
 	return 0;
+}
+
+/* ARGSUSED */
+void
+lortrequest(cmd, rt, sa)
+	int cmd;
+	struct rtentry *rt;
+	struct sockaddr *sa;
+{
 }

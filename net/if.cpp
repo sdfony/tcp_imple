@@ -1,4 +1,6 @@
-#include "if_if.h"
+#include "if.h"
+#include "if_types.h"
+#include "if_dl.h"
 
 int ifconf(int cmd, caddr_t data)
 {
@@ -53,7 +55,7 @@ void if_attach(struct ifnet *ifp)
 
     // set the member of struct sockaddr_dl pointed by ifa_addr && ifa_netmask
     struct sockaddr_dl *dl_addr = (struct sockaddr_dl *)ifa->ifa_addr;
-    dl_addr->sdl_len = sizeof (sockaddr_dl);
+    dl_addr->sdl_len = sizeof (*dl_addr);
     dl_addr->sdl_family = AF_LINK;
     dl_addr->sdl_index = ifp->if_index;
     dl_addr->sdl_type = ifp->if_type;
@@ -85,4 +87,40 @@ void ifinit()
 
 void if_slowtimo(void *arg)
 {
+}
+
+void			 if_freenameindex(struct if_nameindex *)
+{
+
+}
+
+char			*if_indextoname(unsigned int, char *)
+{
+	return nullptr;
+}
+
+//struct if_nameindex	*if_nameindex(void)
+//{
+	//return nullptr;
+//}
+
+unsigned int		 if_nametoindex(const char *)
+{
+	return 0;
+}
+
+// 丢弃队列ifq中的所有分组，
+// 例如，当一个接口被关闭
+void if_qflush(struct ifqueue *ifq)
+{
+	while (ifq->ifq_len > 0)
+	{
+		struct mbuf * m = ifq->ifq_head;
+		ifq->ifq_head = ifq->ifq_head->m_nextpkt;
+
+		m_freem(m);
+
+		ifq->ifq_len--;
+		ifq->ifq_drops++;
+	}
 }

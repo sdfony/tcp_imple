@@ -1,104 +1,34 @@
-struct if_data
-{
-	u_char ifi_type;
-	u_char ifi_addrlen;
-	u_char ifi_hdrlen;
-	u_long ifi_mtu;
-	u_long ifi_metric;
-	u_long ifi_baudrate;
+#ifndef NET_IF_H
+#define NET_IF_H
 
-	// other ifnet members;
+#include "..\sys\time.h"
+#include "..\sys\socket.h"
+#include "..\netinet\in.h"
 
-	u_long ifi_ipackets;
-	u_long ifi_ierrors;
-	u_long ifi_opackets;
-	u_long ifi_oerrors;
-	u_long ifi_collisions;
-	u_long ifi_ibytes;
-	u_long ifi_obytes;
-	u_long ifi_imcasts;
-	u_long ifi_omcasts;
-	u_long ifi_iqdrops;
-	u_long ifi_noproto;
-
-	struct timeval ifi_lastchange;
-};
-
-#define	IFF_UP		0x1		/* (n) interface is up */
-#define	IFF_BROADCAST	0x2		/* (i) broadcast address valid */
-#define	IFF_DEBUG	0x4		/* (n) turn on debugging */
-#define	IFF_LOOPBACK	0x8		/* (i) is a loopback net */
-#define	IFF_POINTOPOINT	0x10		/* (i) is a point-to-point link */
-/*			0x20		   was IFF_SMART */
-#define	IFF_DRV_RUNNING	0x40		/* (d) resources allocated */
-#define	IFF_NOARP	0x80		/* (n) no address resolution protocol */
-#define	IFF_PROMISC	0x100		/* (n) receive all packets */
-#define	IFF_ALLMULTI	0x200		/* (n) receive all multicast packets */
-#define	IFF_DRV_OACTIVE	0x400		/* (d) tx hardware queue is full */
-#define	IFF_SIMPLEX	0x800		/* (i) can't hear own transmissions */
+#define	IFF_UP		0x1		/* interface is up */
+#define	IFF_BROADCAST	0x2		/* broadcast address valid */
+#define	IFF_DEBUG	0x4		/* turn on debugging */
+#define	IFF_LOOPBACK	0x8		/* is a loopback net */
+#define	IFF_POINTOPOINT	0x10		/* interface is point-to-point link */
+#define	IFF_NOTRAILERS	0x20		/* avoid use of trailers */
+#define	IFF_RUNNING	0x40		/* resources allocated */
+#define	IFF_NOARP	0x80		/* no address resolution protocol */
+#define	IFF_PROMISC	0x100		/* receive all packets */
+#define	IFF_ALLMULTI	0x200		/* receive all multicast packets */
+#define	IFF_OACTIVE	0x400		/* transmission in progress */
+#define	IFF_SIMPLEX	0x800		/* can't hear own transmissions */
 #define	IFF_LINK0	0x1000		/* per link layer defined bit */
 #define	IFF_LINK1	0x2000		/* per link layer defined bit */
 #define	IFF_LINK2	0x4000		/* per link layer defined bit */
-#define	IFF_ALTPHYS	IFF_LINK2	/* use alternate physical connection */
-#define	IFF_MULTICAST	0x8000		/* (i) supports multicast */
-#define	IFF_CANTCONFIG	0x10000		/* (i) unconfigurable using ioctl(2) */
-#define	IFF_PPROMISC	0x20000		/* (n) user-requested promisc mode */
-#define	IFF_MONITOR	0x40000		/* (n) user-requested monitor mode */
-#define	IFF_STATICARP	0x80000		/* (n) static ARP */
-#define	IFF_DYING	0x200000	/* (n) interface is winding down */
-#define	IFF_RENAMING	0x400000	/* (n) interface is being renamed */
+#define	IFF_MULTICAST	0x8000		/* supports multicast */
 
-/*
- * Values for if_link_state.
- */
-#define	LINK_STATE_UNKNOWN	0	/* link invalid/unknown */
-#define	LINK_STATE_DOWN		1	/* link is down */
-#define	LINK_STATE_UP		2	/* link is up */
+/* flags set internally only: */
+#define	IFF_CANTCHANGE \
+	(IFF_BROADCAST|IFF_POINTOPOINT|IFF_RUNNING|IFF_OACTIVE|\
+	    IFF_SIMPLEX|IFF_MULTICAST|IFF_ALLMULTI)
 
-struct ifreq
-{
-#define IFNAMSIZ 16
 
-    char ifr_name[IFNAMSIZ];
-    union
-    {
-        struct sockaddr ifru_addr;
-        struct sockaddr ifru_dstaddr;
-        struct sockaddr ifru_broadaddr;
-        short ifru_flags;
-        int ifru_metric;
-        caddr_t ifru_data;
-    } ifr_ifru;
-
-#define ifr_addr        ifr_ifru.ifru_addr
-#define ifr_dstaddr     ifr_ifru.ifru_dstaddr
-#define ifr_broadaddr   ifr_ifru.ifru_broadaddr
-#define ifr_flags       ifr_ifru.ifru_flags
-#define ifr_metric      ifr_ifru.ifru_metric
-#define ifr_data        ifr_ifru.ifru_data
-};
-
-struct in_aliasreq
-{
-    char    ifra_name[IFNAMESIZE];
-    struct sockaddr_in  ifra_addr;
-    struct sockaddr_in  ifra_broadaddr;
-#define ifra_dstaddr    ifra_broadaddr
-    struct sockaddr_in  ifra_mask;
-};
-
-struct ifconf
-{
-    int ifc_len;
-    union
-    {
-        caddr_t ifcu_buf;
-        struct ifreq *ifcu_req;
-    } ifc_ifcu;
-
-#define ifc_buf ifc_ifcu.ifcu_buf
-#define ifc_req ifc_ifcu.ifcu_req
-};
+struct mbuf;
 
 struct ifnet
 {
@@ -111,18 +41,49 @@ struct ifnet
     short if_timer;
     int if_pcount;
     caddr_t if_bpf;
+	struct	if_data 
+    {
+/* generic interface information */
+		u_char	ifi_type;	/* ethernet, tokenring, etc */
+		u_char	ifi_addrlen;	/* media address length */
+		u_char	ifi_hdrlen;	/* media header length */
+		u_long	ifi_mtu;	/* maximum transmission unit */
+		u_long	ifi_metric;	/* routing metric(external only) */
+		u_long	ifi_baudrate;	/* linespeed */
+/* volatile statistics */
+		u_long	ifi_ipackets;	/* packets received on interface */
+		u_long	ifi_ierrors;	/* input errors on interface */
+		u_long	ifi_opackets;	/* packets sent on interface */
+		u_long	ifi_oerrors;	/* output errors on interface */
+		u_long	ifi_collisions;	/* collisions on csma interfaces */
+		u_long	ifi_ibytes;	/* total number of octets received */
+		u_long	ifi_obytes;	/* total number of octets sent */
+		u_long	ifi_imcasts;	/* packets received via multicast */
+		u_long	ifi_omcasts;	/* packets sent via multicast */
+		u_long	ifi_iqdrops;	/* dropped on input, this interface */
+		u_long	ifi_noproto;	/* destined for unsupported protocol */
+		struct	timeval ifi_lastchange;/* last updated */
+	}	if_data;
 
     struct ifqueue if_snd;
-	struct if_data if_data;
 
-    int (*if_init)(int);
-    int (*if_output)(struct ifnet *, struct mbuf *,
+    int(*if_init)(int);
+    int(*if_output)(struct ifnet *, struct mbuf *,
             struct sockaddr*, struct rtentry *);
-    int (*if_start)(struct ifnet *);
-    int (*if_done)(struct ifnet *);
-    int (*if_ioctl)(struct ifnet *, int, caddr_t);
-    int (*if_reset)(int);
-    int (*if_watchdog)(int);
+    int(*if_start)(struct ifnet *);
+    int(*if_done)(struct ifnet *);
+    int(*if_ioctl)(struct ifnet *, int, caddr_t);
+    int(*if_reset)(int);
+    int(*if_watchdog)(int);
+
+	struct	ifqueue 
+    {
+		struct	mbuf *ifq_head;
+		struct	mbuf *ifq_tail;
+		int	ifq_len;
+		int	ifq_maxlen;
+		int	ifq_drops;
+	} if_snd;			/* output queue */
 
 #define if_mtu if_data.ifi_mtu
 #define if_type if_data.ifi_type
@@ -144,12 +105,171 @@ struct ifnet
 #define if_lastchange if_data.ifi_lastchange
 };
 
-struct ifqueue
-{
-    struct mbuf *ifq_head;
-    struct mbuf *ifq_tail;
-    int ifq_len;
-    int ifq_maxlen;
-    int ifq_drops;
+/*
+ * Message format for use in obtaining information about interfaces
+ * from getkerninfo and the routing socket
+ */
+struct if_msghdr {
+	u_short	ifm_msglen;	/* to skip over non-understood messages */
+	u_char	ifm_version;	/* future binary compatability */
+	u_char	ifm_type;	/* message type */
+	int	ifm_addrs;	/* like rtm_addrs */
+	int	ifm_flags;	/* value of if_flags */
+	u_short	ifm_index;	/* index for associated ifp */
+	struct	if_data ifm_data;/* statistics and other data about if */
 };
 
+/*
+ * Message format for use in obtaining information about interface addresses
+ * from getkerninfo and the routing socket
+ */
+struct ifa_msghdr {
+	u_short	ifam_msglen;	/* to skip over non-understood messages */
+	u_char	ifam_version;	/* future binary compatability */
+	u_char	ifam_type;	/* message type */
+	int	ifam_addrs;	/* like rtm_addrs */
+	int	ifam_flags;	/* value of ifa_flags */
+	u_short	ifam_index;	/* index for associated ifp */
+	int	ifam_metric;	/* value of ifa_metric */
+};
+
+struct ifreq
+{
+    char ifr_name[IFNAMSIZ];
+    union
+    {
+        struct sockaddr ifru_addr;
+        struct sockaddr ifru_dstaddr;
+        struct sockaddr ifru_broadaddr;
+        short ifru_flags;
+        int ifru_metric;
+        caddr_t ifru_data;
+    } ifr_ifru;
+
+#define ifr_addr        ifr_ifru.ifru_addr
+#define ifr_dstaddr     ifr_ifru.ifru_dstaddr
+#define ifr_broadaddr   ifr_ifru.ifru_broadaddr
+#define ifr_flags       ifr_ifru.ifru_flags
+#define ifr_metric      ifr_ifru.ifru_metric
+#define ifr_data        ifr_ifru.ifru_data
+};
+
+struct ifaliasreq
+{
+    char    ifra_name[IFNAMSIZ];
+    struct sockaddr_in  ifra_addr;
+    struct sockaddr_in  ifra_broadaddr;
+    struct sockaddr_in  ifra_mask;
+};
+
+struct ifconf
+{
+    int ifc_len;
+    union
+    {
+        caddr_t ifcu_buf;
+        struct ifreq *ifcu_req;
+    } ifc_ifcu;
+
+#define ifc_buf ifc_ifcu.ifcu_buf
+#define ifc_req ifc_ifcu.ifcu_req
+};
+
+struct ifaddr
+{
+    struct ifaddr *ifa_next;
+    struct ifnet *ifa_ifp;
+    struct sockaddr *ifa_addr;
+    struct sockaddr *ifa_dstaddr;
+#define ifa_broadaddr ifa_dstadrr
+    struct sockaddr *ifa_netmask;
+    void(*ifa_rtrequest)();
+    u_short ifa_flags;
+    short ifa_refcnt;
+    int ifa_metric;
+};
+
+#define IFAFREE(ifa)    \
+    if((ifa)->ifa_refcnt <= 0) \
+        ifafree(ifa);   \
+    else    \
+       (ifa)->ifa_refcnt--;
+
+
+#define IF_QFULL(ifq)   \
+{   \
+	(ifq)->ifq_len >= (ifq)->ifq_maxlen;    \
+}
+
+#define IF_DROP(ifq)    \
+{   \
+	(ifq)->ifq_drops++; \
+}
+
+#define IF_ENQUEUE(ifq, m)  \
+{   \
+	(ifq)->ifq_tail->m_nextpkt = m; \
+	(ifq)->ifq_tail = m;    \
+	(ifq)->ifq_len++;   \
+}
+
+#define IF_PREPEND(ifq, m)  \
+{   \
+	m->m_nextpkt = (ifq)->ifq_head; \
+	(ifq)->ifq_head = m;    \
+	(ifq)->ifq_len++;   \
+}
+
+#define IF_DEQUEUE(ifq, m)  \
+{   \
+	m = nulltpr;   \
+	if((ifq)->ifq_len == 0) \
+		return; \
+	m = (ifq)->ifq_head;    \
+	(ifq)->ifq_head = (ifq)->ifq_head->m_nextpkt;   \
+	(ifq)->ifq_len--;   \
+}
+
+#define	IFQ_MAXLEN	50
+#define	IFNET_SLOWHZ	1		/* granularity is 1 second */
+
+
+void	ether_ifattach(struct ifnet *);
+void	ether_input(struct ifnet *, struct ether_header *, struct mbuf *);
+int	    ether_output(struct ifnet *,
+	   struct mbuf *, struct sockaddr *, struct rtentry *);
+char	*ether_sprintf(u_char *);
+
+void	if_attach(struct ifnet *);
+void	if_down(struct ifnet *);
+void	if_qflush(struct ifqueue *);
+void	if_slowtimo(void *);
+void	if_up(struct ifnet *);
+void	ifubareset(int);
+int	ifconf(int, caddr_t);
+void	ifinit(void);
+int	ifioctl(struct socket *, int, caddr_t, struct proc *);
+int	ifpromisc(struct ifnet *, int);
+struct	ifnet *ifunit(char *);
+
+struct	ifaddr *ifa_ifwithaddr(struct sockaddr *);
+struct	ifaddr *ifa_ifwithaf(int);
+struct	ifaddr *ifa_ifwithdstaddr(struct sockaddr *);
+struct	ifaddr *ifa_ifwithnet(struct sockaddr *);
+struct	ifaddr *ifa_ifwithroute(int, struct sockaddr *,
+					struct sockaddr *);
+struct	ifaddr *ifaof_ifpforaddr(struct sockaddr *, struct ifnet *);
+void	ifafree(struct ifaddr *);
+void	link_rtrequest(int, struct rtentry *, struct sockaddr *);
+
+int	loioctl(struct ifnet *, int, caddr_t);
+void	loopattach(int);
+int	looutput(struct ifnet *,
+	   struct mbuf *, struct sockaddr *, struct rtentry *);
+void	lortrequest(int, struct rtentry *, struct sockaddr *);
+
+// global variables
+struct	ifnet	*ifnet;
+
+
+#endif  // NET_IF_H

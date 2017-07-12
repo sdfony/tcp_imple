@@ -1,34 +1,33 @@
 #ifndef M_BUF_H
 #define M_BUF_H
 
-#include "../../types.h"
+#include "types.h"
 #include <stdlib.h>
 
-#define MCLBYTES    2048
-#define MHLEN    100
-#define MINCLSIZE    208
-#define MLEN    108
-#define MSIZE    128
+#define MCLBYTES        2048
+#define MHLEN           100
+#define MINCLSIZE       208
+#define MLEN            108
+#define MSIZE           128
 
 /* mbuf±êÊ¶*/
-#define M_EXT   0x0001    /* has associated external storage */
-#define M_PKTHDR 0x0002    /* start of record */
-#define M_EOR    0x0004    /* end of record */
-#define M_BCAST  0x0100 /* send/received as link-level broadcast */
-#define M_MCAST  0x0200 /* send/received as link-level multicast */
+#define M_EXT       0x0001    /* has associated external storage */
+#define M_PKTHDR    0x0002    /* start of record */
+#define M_EOR       0x0004    /* end of record */
+#define M_BCAST     0x0100 /* send/received as link-level broadcast */
+#define M_MCAST     0x0200 /* send/received as link-level multicast */
 #define M_COPYFLAGS (M_PKTHDR|M_EOR|M_BCAST|M_MCAST)    /* flags copied when copying m_pkthdr */
 
 struct mbuf;
-
 /* header at beginning of each mbuf: */
 struct m_hdr
 {
     struct mbuf *mh_next;  /* next buffer in chain */
     struct mbuf *mh_nextpkt; /* next chain in queue/record */
-    int mh_len;   /* amount of data in this mbuf */
-    caddr_t mh_data;  /* location of data */
-    short mh_type;  /* type of data in this mbuf */
-    short mh_flags;  /* flags; see below */
+    int         mh_len;   /* amount of data in this mbuf */
+    caddr_t     mh_data;  /* location of data */
+    short       mh_type;  /* type of data in this mbuf */
+    short       mh_flags;  /* flags; see below */
 };
 
 struct ifnet; // forward declaring
@@ -66,24 +65,24 @@ struct mbuf
     } M_dat;
 };
 
-#define    m_next        m_hdr.mh_next
-#define    m_len        m_hdr.mh_len
-#define    m_data        m_hdr.mh_data
-#define    m_type        m_hdr.mh_type
-#define    m_flags        m_hdr.mh_flags
-#define    m_nextpkt    m_hdr.mh_nextpkt
-#define    m_act        m_nextpkt
-#define    m_pkthdr    M_dat.MH.MH_pkthdr
-#define    m_ext        M_dat.MH.MH_dat.MH_ext
-#define    m_pktdat    M_dat.MH.MH_dat.MH_databuf
-#define    m_dat        M_dat.M_databuf
+#define    m_next           m_hdr.mh_next
+#define    m_len            m_hdr.mh_len
+#define    m_data           m_hdr.mh_data
+#define    m_type           m_hdr.mh_type
+#define    m_flags          m_hdr.mh_flags
+#define    m_nextpkt        m_hdr.mh_nextpkt
+#define    m_act            m_nextpkt
+#define    m_pkthdr         M_dat.MH.MH_pkthdr
+#define    m_ext            M_dat.MH.MH_dat.MH_ext
+#define    m_pktdat         M_dat.MH.MH_dat.MH_databuf
+#define    m_dat            M_dat.M_databuf
 
 /* mbuf types */
-#define MT_FREE  0 /* should be on free list */
-#define MT_DATA  1 /* dynamic (data) allocation */
+#define MT_FREE   0 /* should be on free list */
+#define MT_DATA   1 /* dynamic (data) allocation */
 #define MT_HEADER 2 /* packet header */
 #define MT_SOCKET 3 /* socket structure */
-#define MT_PCB  4 /* protocol control block */
+#define MT_PCB    4 /* protocol control block */
 #define MT_RTABLE 5 /* routing tables */
 #define MT_HTABLE 6 /* IMP host tables */
 #define MT_ATABLE 7 /* address resolution tables */
@@ -103,8 +102,8 @@ struct mbuf
     { \
         (m)->m_type = (type);   \
         /*MBUFLOCK(mbstat.m_mtypes[type]++;) */\
-        (m)->m_next = (struct mbuf *)NULL; \
-        (m)->m_nextpkt = (struct mbuf *)NULL; \
+        (m)->m_next = nullptr; \
+        (m)->m_nextpkt = nullptr; \
         (m)->m_data = (m)->m_dat; \
         (m)->m_flags = 0; \
         (m)->m_len = 0; \
@@ -152,12 +151,12 @@ struct mbuf
     { \
         (m)->m_type = (type);   \
         /*MBUFLOCK(mbstat.m_mtypes[type]++;) */\
-        (m)->m_next = (struct mbuf *)NULL; \
-        (m)->m_nextpkt = (struct mbuf *)NULL; \
+        (m)->m_next = nullptr; \
+        (m)->m_nextpkt = nullptr; \
         (m)->m_data = (m)->m_pktdat; \
         (m)->m_flags = M_PKTHDR; \
         (m)->m_pkthdr.len = (m)->m_len = 0; \
-        (m)->m_pkthdr.rcvif = NULL; \
+        (m)->m_pkthdr.rcvif = nullptr; \
     }   \
   /*else    */\
    /*(m) = m_retry((how), (type));    */\

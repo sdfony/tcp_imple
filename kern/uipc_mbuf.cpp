@@ -1,12 +1,11 @@
-#include "mbuf.h"
+#include "..\sys\mbuf.h"
 #include <string.h>
-#include <stdlib.h>
 #include <algorithm>
 
 static inline int m_total_len(struct mbuf *m)
 {
     int len = 0;
-    while (m != NULL)
+    while (m != nullptr)
     {
         len += m->m_len;
         m = m->m_next;
@@ -19,7 +18,7 @@ static inline int m_total_len(struct mbuf *m)
 // len < 0, remove data from start to end
 void m_adj(struct mbuf *m, int len)
 {
-    if (m == NULL)
+    if (m == nullptr)
         return ;
 
     if (len > 0)
@@ -27,7 +26,7 @@ void m_adj(struct mbuf *m, int len)
         if (m->m_flags & M_PKTHDR)
            m->m_pkthdr.len -= len;
 
-         while (m != NULL)
+         while (m != nullptr)
         {
             if (m->m_len < len)
             {
@@ -61,7 +60,7 @@ void m_adj(struct mbuf *m, int len)
             //m = old;
         //}
 
-        while (m != NULL)
+        while (m != nullptr)
         {
             if (m->m_len < len)
             {
@@ -114,7 +113,7 @@ void m_cat(struct mbuf *m, struct mbuf *n)
 
 struct mbuf *m_copy(struct mbuf *m, int offset, int len)
 {
-    return NULL;
+    return nullptr;
 }
 
 static inline int get_total_len(struct mbuf *m)
@@ -333,9 +332,9 @@ static int ref(caddr_t p)
 
 struct mbuf *m_free(struct mbuf *m)
 {
-    struct mbuf *n = NULL;
+    struct mbuf *n = nullptr;
 
-    if (m == NULL)
+    if (m == nullptr)
         return n;
 
     if (m->m_flags & M_EXT)
@@ -378,7 +377,7 @@ void m_freem(struct mbuf *m)
 
 struct mbuf *m_get(int nowait, int type)
 {
-    struct mbuf *m = NULL;
+    struct mbuf *m = nullptr;
 
     MGET(m, nowait, type);
     memset(mtod(m, caddr_t), 0, sizeof (char) * MLEN);
@@ -388,7 +387,7 @@ struct mbuf *m_get(int nowait, int type)
 
 struct mbuf *m_getclr(int nowait, int type)
 {
-    struct mbuf *m = NULL;
+    struct mbuf *m = nullptr;
 
     MGET(m, nowait, type);
 	mtod(m, caddr_t) = (caddr_t)malloc(sizeof(char) * MCLBYTES);
@@ -399,7 +398,7 @@ struct mbuf *m_getclr(int nowait, int type)
 
 struct mbuf *m_gethdr(int nowait, int type)
 {
-    struct mbuf *m = NULL;
+    struct mbuf *m = nullptr;
 
     MGETHDR(m, nowait, type);
     memset(mtod(m, caddr_t), 0, sizeof (char) * MHLEN);
@@ -436,7 +435,7 @@ struct mbuf *m_pullup(struct mbuf *m, int len)
     else
     {
         m_free(n);
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -446,7 +445,7 @@ void m_reclaim()
 
 struct mbuf *m_retry(int i, int t)
 {
-	struct mbuf *m = NULL;
+	struct mbuf *m = nullptr;
 
 	m_reclaim();
 

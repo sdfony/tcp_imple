@@ -1,7 +1,7 @@
 #ifndef IF_DL_ADDR_H
 #define IF_DL_ADDR_H
 
-#include "../types.h"
+#include "..\sys\types.h"
 
 struct sockaddr_dl
 {
@@ -16,5 +16,8 @@ struct sockaddr_dl
 };
 
 #define LLADDR(s) ((caddr_t)((s)->sdl_data + (s)->sdl_nlen))
+
+void	link_addr (const char *, struct sockaddr_dl *);
+char	*link_ntoa (const struct sockaddr_dl *);
 
 #endif  // IF_DL_ADDR_H
