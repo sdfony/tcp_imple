@@ -1,6 +1,14 @@
 #include "if.h"
 #include "if_types.h"
 #include "if_dl.h"
+#include <stddef.h>
+#include <string.h>
+#include <stdio.h>
+#include "..\sys\mbuf.h"
+
+int ifqmaxlen = IFQ_MAXLEN;
+int if_index = 0;
+struct ifaddr **ifnet_addrs;
 
 int ifconf(int cmd, caddr_t data)
 {
@@ -24,10 +32,12 @@ int ifioctl(struct socket *so, int cmd,
 
 void if_attach(struct ifnet *ifp)
 {
+    static int if_indexlim = 8;
     static int i = 0;
+	struct ifnet *iflast = ifnet;
+	char buf[12] = "";
 
-    struct ifnet *iflast = ifnet;
-    while (iflast && iflast->if_next)
+	while (iflast && iflast->if_next)
     {
         iflast = iflast->if_next;
     }
@@ -44,8 +54,8 @@ void if_attach(struct ifnet *ifp)
     ifp->if_addrlist = (struct ifaddr *)calloc(1, sizeof (struct ifaddr));
 
     // set the member of struct ifaddr pointed by if_addrlist
-    auto ifa = ifp->if_addrlist;
-    ifa->ifa_next = nullptr;
+	struct ifaddr *ifa = ifp->if_addrlist;
+    ifa->ifa_next = NULL;
     ifa->ifa_ifp = ifp;
     ifa->ifa_addr = (struct sockaddr *)calloc(2, sizeof (struct sockaddr_dl));
     //ifa->ifa_rtrequest = ;
@@ -60,7 +70,8 @@ void if_attach(struct ifnet *ifp)
     dl_addr->sdl_index = ifp->if_index;
     dl_addr->sdl_type = ifp->if_type;
     strcpy(dl_addr->sdl_data, ifp->if_name);
-    strcat(dl_addr->sdl_data, std::to_string(ifp->if_unit).c_str());
+	sprintf(buf, "%d", ifp->if_unit);
+    strcat(dl_addr->sdl_data, buf);
     dl_addr->sdl_nlen = strlen(dl_addr->sdl_data);
     dl_addr->sdl_alen = 6;
     //dl_addr->sdl_slen = ;
@@ -89,22 +100,22 @@ void if_slowtimo(void *arg)
 {
 }
 
-void			 if_freenameindex(struct if_nameindex *)
+void if_freenameindex(struct if_nameindex *a)
 {
 
 }
 
-char			*if_indextoname(unsigned int, char *)
+char *if_indextoname(unsigned int a, char *b)
 {
-	return nullptr;
+	return NULL;
 }
 
 //struct if_nameindex	*if_nameindex(void)
 //{
-	//return nullptr;
+	//return NULL;
 //}
 
-unsigned int		 if_nametoindex(const char *)
+unsigned int if_nametoindex(const char *c)
 {
 	return 0;
 }

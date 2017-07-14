@@ -1,4 +1,6 @@
 #include "if.h"
+#include "if_types.h"
+#include <stddef.h>
 
 #define LOMTU 1536
 
@@ -8,19 +10,19 @@ int loioctl(struct ifnet *, int, caddr_t);
 
 void loopattach(int n)
 {
-    struct ifnet &ifnet = loif;
+    struct ifnet *ifp = &loif;
 
-	ifnet.if_next = nullptr;
-	ifnet.if_name = "lo";
-    ifnet.if_flags = IFF_MULTICAST | IFF_LOOPBACK;
-    ifnet.if_type = IFT_LOOP;
-    ifnet.if_mtu = LOMTU;
-    ifnet.if_metric = 0;
+	ifp->if_next = NULL;
+	ifp->if_name = "lo";
+    ifp->if_flags = IFF_MULTICAST | IFF_LOOPBACK;
+    ifp->if_type = IFT_LOOP;
+    ifp->if_mtu = LOMTU;
+    ifp->if_metric = 0;
 
-    ifnet.if_output = looutput;
-    ifnet.if_ioctl = loioctl;
+    ifp->if_output = looutput;
+    ifp->if_ioctl = loioctl;
 
-    if_attach(&ifnet);
+    if_attach(ifp);
 }
 
 int loioctl(struct ifnet *ifp, int cmd, caddr_t data)

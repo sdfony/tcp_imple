@@ -3,25 +3,8 @@
 
 #include "if.h"
 
-#define SLIPDISC 0
-#define NSL 32
 
-#define MCLBYTES 2048
-#define SLBUFSIZE 2048
-#define SLIP_HDRLEN 16
-#define BUFOFFSET 148
-#define SLMAX 1900
-#define SLMTU 296
-#define SLIP_HIWAT 100
 
-struct slcompress {};
-struct dev_t {};
-
-//  sc_if: if_flags, sc_flags
-#define SC_COMPRESS 0
-#define SC_NOICMP   1
-#define SC_AUTOCOMP 2
-#define SC_ERROR    3
 
 /*
  * Definitions for SLIP interface data structures

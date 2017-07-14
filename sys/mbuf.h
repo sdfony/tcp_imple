@@ -102,8 +102,8 @@ struct mbuf
     { \
         (m)->m_type = (type);   \
         /*MBUFLOCK(mbstat.m_mtypes[type]++;) */\
-        (m)->m_next = nullptr; \
-        (m)->m_nextpkt = nullptr; \
+        (m)->m_next = NULL; \
+        (m)->m_nextpkt = NULL; \
         (m)->m_data = (m)->m_dat; \
         (m)->m_flags = 0; \
         (m)->m_len = 0; \
@@ -151,12 +151,12 @@ struct mbuf
     { \
         (m)->m_type = (type);   \
         /*MBUFLOCK(mbstat.m_mtypes[type]++;) */\
-        (m)->m_next = nullptr; \
-        (m)->m_nextpkt = nullptr; \
+        (m)->m_next = NULL; \
+        (m)->m_nextpkt = NULL; \
         (m)->m_data = (m)->m_pktdat; \
         (m)->m_flags = M_PKTHDR; \
         (m)->m_pkthdr.len = (m)->m_len = 0; \
-        (m)->m_pkthdr.rcvif = nullptr; \
+        (m)->m_pkthdr.rcvif = NULL; \
     }   \
   /*else    */\
    /*(m) = m_retry((how), (type));    */\

@@ -1,11 +1,12 @@
 #include "..\sys\mbuf.h"
+#include "..\sys\myalgo.h"
 #include <string.h>
-#include <algorithm>
+#include <stdbool.h>
 
 static inline int m_total_len(struct mbuf *m)
 {
     int len = 0;
-    while (m != nullptr)
+    while (m != NULL)
     {
         len += m->m_len;
         m = m->m_next;
@@ -18,7 +19,7 @@ static inline int m_total_len(struct mbuf *m)
 // len < 0, remove data from start to end
 void m_adj(struct mbuf *m, int len)
 {
-    if (m == nullptr)
+    if (m == NULL)
         return ;
 
     if (len > 0)
@@ -26,7 +27,7 @@ void m_adj(struct mbuf *m, int len)
         if (m->m_flags & M_PKTHDR)
            m->m_pkthdr.len -= len;
 
-         while (m != nullptr)
+         while (m != NULL)
         {
             if (m->m_len < len)
             {
@@ -60,7 +61,7 @@ void m_adj(struct mbuf *m, int len)
             //m = old;
         //}
 
-        while (m != nullptr)
+        while (m != NULL)
         {
             if (m->m_len < len)
             {
@@ -113,7 +114,7 @@ void m_cat(struct mbuf *m, struct mbuf *n)
 
 struct mbuf *m_copy(struct mbuf *m, int offset, int len)
 {
-    return nullptr;
+    return NULL;
 }
 
 static inline int get_total_len(struct mbuf *m)
@@ -138,7 +139,7 @@ void m_copyback(struct mbuf *m, int offset, int len, caddr_t cp)
     {
 		int total_len = 0;
 
-        if (m == nullptr)
+        if (m == NULL)
         {
             int nowait = 0;
             m = m_get(nowait, 0);
@@ -161,7 +162,7 @@ void m_copyback(struct mbuf *m, int offset, int len, caddr_t cp)
     {
 		int total_len = 0;
 		
-		if (m == nullptr)
+		if (m == NULL)
         {
             int nowait = 0;
             m = m_get(nowait, 0);
@@ -176,12 +177,12 @@ void m_copyback(struct mbuf *m, int offset, int len, caddr_t cp)
 		}
 
 		total_len = get_total_len(m);
-        memcpy(mtod(m, caddr_t)+offset, cp, std::min(total_len-offset, len));
+        memcpy(mtod(m, caddr_t)+offset, cp, min(total_len-offset, len));
 
 		if (m->m_len < offset + len)
-			m->m_len = std::min(total_len, len + offset);
+			m->m_len = min(total_len, len + offset);
 
-        len -= std::min(total_len - offset, len);
+        len -= min(total_len - offset, len);
         offset = 0;
 
         m = m->m_next;
@@ -205,10 +206,10 @@ void m_copydata(struct mbuf *m, int offset, int len, caddr_t cp)
 
     while (len > 0)
     {
-        memcpy(cp, mtod(m, caddr_t) + offset, std::min(m->m_len-offset, len) * sizeof (char));
+        memcpy(cp, mtod(m, caddr_t) + offset, min(m->m_len-offset, len) * sizeof (char));
 
-        cp += std::min(m->m_len-offset, len);
-        len -= std::min(m->m_len-offset, len);
+        cp += min(m->m_len-offset, len);
+        len -= min(m->m_len-offset, len);
         offset = 0;
 
         m = m->m_next;
@@ -218,7 +219,7 @@ void m_copydata(struct mbuf *m, int offset, int len, caddr_t cp)
 // copy data of an exsiting mbuf to create a new mbuf
 struct mbuf *m_copym(struct mbuf *m, int offset, int len, int nowait)
 {
-    struct mbuf *n = nullptr;
+    struct mbuf *n = NULL;
     MGETHDR(n, nowait, m->m_flags);
     struct mbuf *old_n = n;
 
@@ -230,7 +231,7 @@ struct mbuf *m_copym(struct mbuf *m, int offset, int len, int nowait)
     struct mbuf *old = m;
     while (m)
     {
-        if (m == nullptr)
+        if (m == NULL)
         {
             int nowait = 0;
             m = m_get(nowait, 0);
@@ -251,7 +252,7 @@ struct mbuf *m_copym(struct mbuf *m, int offset, int len, int nowait)
 
     while (len > 0)
     {
-        if (m == nullptr)
+        if (m == NULL)
         {
             int nowait = 0;
             m = m_get(nowait, 0);
@@ -261,9 +262,9 @@ struct mbuf *m_copym(struct mbuf *m, int offset, int len, int nowait)
             m_cat(old, m);
         }
 
-        int copy_len = std::min(len, m->m_len - offset);
+        int copy_len = min(len, m->m_len - offset);
 
-        if (n == nullptr)
+        if (n == NULL)
         {
             MGET(n, nowait, m->m_flags);
             m_cat(old_n, n);
@@ -285,7 +286,7 @@ struct mbuf *m_copym(struct mbuf *m, int offset, int len, int nowait)
 struct mbuf *m_devget(char *buf, int len, int off, struct ifnet *ifp,
         void (*copy)(const void *, void *, u_int))
 {
-    struct mbuf *m = nullptr;
+    struct mbuf *m = NULL;
 	int type = 0;
 	int nowait = 0;
     char *p = buf + off;
@@ -296,7 +297,7 @@ struct mbuf *m_devget(char *buf, int len, int off, struct ifnet *ifp,
 
     while (len > 0)
     {
-        if (m == nullptr)
+        if (m == NULL)
         {
             int nowait = 0;
             if (!has_cluster)
@@ -314,7 +315,7 @@ struct mbuf *m_devget(char *buf, int len, int off, struct ifnet *ifp,
             m_cat(old, m);
         }
 
-        int copy_len = std::min(len, m->m_len);
+        int copy_len = min(len, m->m_len);
         memcpy(mtod(m, caddr_t), p, copy_len * sizeof (char));
         m->m_len = copy_len;
         len -= copy_len;
@@ -332,9 +333,9 @@ static int ref(caddr_t p)
 
 struct mbuf *m_free(struct mbuf *m)
 {
-    struct mbuf *n = nullptr;
+    struct mbuf *n = NULL;
 
-    if (m == nullptr)
+    if (m == NULL)
         return n;
 
     if (m->m_flags & M_EXT)
@@ -377,7 +378,7 @@ void m_freem(struct mbuf *m)
 
 struct mbuf *m_get(int nowait, int type)
 {
-    struct mbuf *m = nullptr;
+    struct mbuf *m = NULL;
 
     MGET(m, nowait, type);
     memset(mtod(m, caddr_t), 0, sizeof (char) * MLEN);
@@ -387,7 +388,7 @@ struct mbuf *m_get(int nowait, int type)
 
 struct mbuf *m_getclr(int nowait, int type)
 {
-    struct mbuf *m = nullptr;
+    struct mbuf *m = NULL;
 
     MGET(m, nowait, type);
 	mtod(m, caddr_t) = (caddr_t)malloc(sizeof(char) * MCLBYTES);
@@ -398,7 +399,7 @@ struct mbuf *m_getclr(int nowait, int type)
 
 struct mbuf *m_gethdr(int nowait, int type)
 {
-    struct mbuf *m = nullptr;
+    struct mbuf *m = NULL;
 
     MGETHDR(m, nowait, type);
     memset(mtod(m, caddr_t), 0, sizeof (char) * MHLEN);
@@ -418,7 +419,7 @@ struct mbuf *m_pullup(struct mbuf *m, int len)
 
     while (n->m_len < len)
     {
-        int copy_len = std::min(m->m_len, len - m->m_len);
+        int copy_len = min(m->m_len, len - m->m_len);
 
         memcpy(mtod(n, caddr_t) + n->m_len, mtod(m, caddr_t), copy_len);
         n->m_len += copy_len;
@@ -435,7 +436,7 @@ struct mbuf *m_pullup(struct mbuf *m, int len)
     else
     {
         m_free(n);
-        return nullptr;
+        return NULL;
     }
 }
 
@@ -445,7 +446,7 @@ void m_reclaim()
 
 struct mbuf *m_retry(int i, int t)
 {
-	struct mbuf *m = nullptr;
+	struct mbuf *m = NULL;
 
 	m_reclaim();
 

@@ -1,7 +1,7 @@
 #ifndef SYS_TIME_H
 #define SYS_TIME_H
 
-#include "time.h"
+#include "types.h"
 
 struct timeval
 {
@@ -11,7 +11,7 @@ struct timeval
 
 struct timespec
 {
-    time_t tv_sec;
+    mytime_t tv_sec;
     long tv_nsec;
 };
 

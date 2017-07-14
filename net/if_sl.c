@@ -1,7 +1,10 @@
 #include "if.h"
 #include "..\sys\mbuf.h"
-#include <cstddef>
+#include "if_slvar.h"
+#include "if_types.h"
+#include <stddef.h>
 
+#define NSL 32
 /*
  * SLMAX is a hard limit on input packet size.  To simplify the code
  * and improve performance, we require that packets fit in an mbuf
@@ -81,31 +84,28 @@ struct sl_softc sl_softc[NSL];
 void slattach()
 {
     int i = 0;
-    for (auto &sl : sl_softc)
+	struct sl_softc *sc;
+
+    for (sc = sl_softc; i < NSL; sc++)
     {
-        auto &ifnet = sl.sc_if;
+        sc->sc_if.if_name = "sl";
+		sc->sc_if.if_next = NULL;
+		sc->sc_if.if_unit = i++;
+        sc->sc_if.if_flags = IFF_POINTOPOINT;
+        sc->sc_if.if_snd.ifq_maxlen = 50;
 
-        ifnet.if_name = "sl";
-		ifnet.if_next = nullptr;
-		ifnet.if_unit = i++;
-        ifnet.if_flags = IFF_POINTOPOINT;
-        ifnet.if_snd.ifq_maxlen = ifqmaxlen;
+        sc->sc_if.if_mtu = SLMTU;
+        sc->sc_if.if_type = IFT_SLIP;
+        sc->sc_if.if_metric = 0;
+        sc->sc_if.if_baudrate = 0;
 
-        ifnet.if_mtu = SLMTU;
-        ifnet.if_type = IFT_SLIP;
-        ifnet.if_metric = 0;
-        ifnet.if_baudrate = 0;
+        sc->sc_fastq.ifq_maxlen = 32;
+        sc->sc_flags = SC_AUTOCOMP | SC_NOICMP;
 
-        sl.sc_fastq.ifq_maxlen = 32;
-        sl.sc_flags = SC_AUTOCOMP | SC_NOICMP;
+        sc->sc_if.if_output = sloutput;
+        sc->sc_if.if_ioctl = slioctl;
 
-        //ifnet.if_init = ;
-        ifnet.if_output = sloutput;
-        //ifnet.if_start = slstart;
-        ifnet.if_ioctl = slioctl;
-        //ifnet.if_reset = ;
-
-		if_attach(&ifnet);
+		if_attach(&sc->sc_if);
     }
 }
 
@@ -116,13 +116,12 @@ int slopen(dev_t dev, struct tty *tp)
 
 static int slinit(struct sl_softc *sc)
 {
-
     return 1;
 }
 
 static struct mbuf *sl_btom(struct sl_softc *sc, int len)
 {
-	return nullptr;
+	return NULL;
 }
 
 void slinput(int c, struct tty *tp)

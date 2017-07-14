@@ -65,8 +65,6 @@ struct ifnet
 		struct	timeval ifi_lastchange;/* last updated */
 	}	if_data;
 
-    struct ifqueue if_snd;
-
     int(*if_init)(int);
     int(*if_output)(struct ifnet *, struct mbuf *,
             struct sockaddr*, struct rtentry *);
@@ -76,7 +74,7 @@ struct ifnet
     int(*if_reset)(int);
     int(*if_watchdog)(int);
 
-	struct	ifqueue 
+	struct ifqueue 
     {
 		struct	mbuf *ifq_head;
 		struct	mbuf *ifq_tail;
@@ -135,6 +133,7 @@ struct ifa_msghdr {
 
 struct ifreq
 {
+#define IFNAMSIZ 16
     char ifr_name[IFNAMSIZ];
     union
     {

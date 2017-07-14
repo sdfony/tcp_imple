@@ -24,7 +24,7 @@ typedef unsigned short u_short;
 typedef unsigned int u_int;
 typedef unsigned long u_long;
 
-typedef long mytime_t;
+typedef long time_t;
 
 /*
  * Forward structure declarations for function prototypes.  We include the
