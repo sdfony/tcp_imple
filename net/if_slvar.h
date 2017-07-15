@@ -3,9 +3,6 @@
 
 #include "if.h"
 
-
-
-
 /*
  * Definitions for SLIP interface data structures
  * 

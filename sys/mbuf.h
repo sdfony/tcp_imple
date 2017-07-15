@@ -2,13 +2,17 @@
 #define M_BUF_H
 
 #include "types.h"
+#include "malloc.h"
 #include <stdlib.h>
 
-#define MCLBYTES        2048
-#define MHLEN           100
-#define MINCLSIZE       208
-#define MLEN            108
-#define MSIZE           128
+#define	MSIZE		128		/* size of an mbuf */
+#define	MCLBYTES	1024
+
+#define	MLEN		(MSIZE - sizeof(struct m_hdr))	/* normal data len */
+#define	MHLEN		(MLEN - sizeof(struct pkthdr))	/* data len w/pkthdr */
+
+#define	MINCLSIZE	(MHLEN + MLEN)	/* smallest amount to put in cluster */
+#define	M_MAXCOMPRESS	(MHLEN / 2)	/* max amount to copy for compression */
 
 /* mbuf±êÊ¶*/
 #define M_EXT       0x0001    /* has associated external storage */
@@ -44,7 +48,6 @@ struct m_ext
     caddr_t ext_buf;  /* start of buffer */
     void (*ext_free)();  /* free routine if not the usual */
     u_int ext_size;  /* size of buffer, for ext_free */
-
 };
 
 struct mbuf
@@ -91,8 +94,17 @@ struct mbuf
 #define MT_FTABLE 11 /* fragment reassembly header */
 #define MT_RIGHTS 12 /* access rights */XZv
 
-#define mtod(m, t) ((t)((m)->m_data))
-#define dtot(x) ((struct mbuf *)((int)(x) & ~(MSIZE-1)))
+/*
+* Macros for type conversion
+* mtod(m,t) -	convert mbuf pointer to data pointer of correct type
+* dtom(x) -	convert data pointer within mbuf to mbuf pointer (XXX)
+* mtocl(x) -	convert pointer within cluster to cluster index #
+* cltom(x) -	convert cluster # to ptr to beginning of cluster
+*/
+#define mtod(m,t)	((t)((m)->m_data))
+#define	dtom(x)		((struct mbuf *)((int)(x) & ~(MSIZE-1)))
+#define	mtocl(x)	(((u_int)(x) - (u_int)mbutl) >> MCLSHIFT)
+#define	cltom(x)	((caddr_t)((u_int)mbutl + ((u_int)(x) << MCLSHIFT)))
 
 #define MGET(m, how, type) \
 { \
@@ -209,18 +221,46 @@ struct mbuf *m_pullup(struct mbuf *m, int len);
 void m_reclaim();
 struct mbuf *m_retry(int i, int t);
 
-struct mbstat
-{
-    u_long m_mbufs;
-    u_long m_clusters;
-    u_long m_spare;
-    u_long m_clfree;
-    u_long m_drops;
-    u_long m_wait;
-    u_long m_drain;
+/* flags to m_get/MGET */
+#define	M_DONTWAIT	M_NOWAIT
+#define	M_WAIT		M_WAITOK
 
-    u_short m_mtypes[256];
+/* change mbuf to new type */
+#define MCHTYPE(m, t) { \
+	MBUFLOCK(mbstat.m_mtypes[(m)->m_type]--; mbstat.m_mtypes[t]++;) \
+	(m)->m_type = t;\
+}
+
+/* length to m_copy to copy all */
+#define	M_COPYALL	1000000000
+
+/*
+* Mbuf statistics.
+*/
+struct mbstat {
+	u_long	m_mbufs;	/* mbufs obtained from page pool */
+	u_long	m_clusters;	/* clusters obtained from page pool */
+	u_long	m_spare;	/* spare field */
+	u_long	m_clfree;	/* free clusters */
+	u_long	m_drops;	/* times failed to find space */
+	u_long	m_wait;		/* times waited for space */
+	u_long	m_drain;	/* times drained protocols for space */
+	u_short	m_mtypes[256];	/* type specific mbuf allocations */
 };
+
+extern	struct mbuf *mbutl;		/* virtual address of mclusters */
+extern	char *mclrefcnt;		/* cluster reference counts */
+struct	mbstat mbstat;
+extern	int nmbclusters;
+union	mcluster *mclfree;
+int	max_linkhdr;			/* largest link-level header */
+int	max_protohdr;			/* largest protocol header */
+int	max_hdr;			/* largest link+protocol header */
+int	max_datalen;			/* MHLEN - max_hdr */
+extern	int mbtypes[];			/* XXX */
+
+
+
 
 
 #endif  // M_BUF_H

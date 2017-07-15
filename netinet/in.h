@@ -196,7 +196,7 @@ int	 in_cksum(struct mbuf *, int);
 int	 in_localaddr(struct in_addr);
 u_long	 in_netof(struct in_addr);
 void	 in_socktrim(struct sockaddr_in *);
-void in_control(struct socket *so, int cmd, caddr_t data, struct ifnet *ifp);
-void in_ifinit(struct ifnet *ifp, struct in_ifaddr *ia, struct sockaddr_in *sin, int scrub);
+int in_control(struct socket *so, int cmd, caddr_t data, struct ifnet *ifp);
+int in_ifinit(struct ifnet *ifp, struct in_ifaddr *ia, struct sockaddr_in *sin, int scrub);
 
 #endif  // NET_INET_IN_H
