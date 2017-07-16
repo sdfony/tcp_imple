@@ -1,4 +1,9 @@
+#ifndef DEV_DEVICE_H
+#define DEV_DEVICE_H
+
+#include "..\..\sys\types.h"
 /*
+ *
  * Copyright (c) 1982, 1990, 1993
  *	The Regents of the University of California.  All rights reserved.
  *
@@ -123,3 +128,5 @@ extern struct hp_device hp_dinit[];
 extern caddr_t sctova(), sctopa(), iomap();
 #endif
 #endif
+
+#endif  // DEV_DEVICE_H

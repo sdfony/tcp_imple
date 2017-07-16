@@ -1,7 +1,7 @@
 #ifndef NET_INET_IF_ETHER_H
 #define NET_INET_IF_ETHER_H
 
-#include "..\sys\types.h"
+#include "..\net\if_arp.h"
 
 struct ether_header
 {

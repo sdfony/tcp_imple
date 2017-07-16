@@ -1,8 +1,15 @@
-#include "if_le.h"
-#include "../mbuf/mbuf/mbuf.h"
 #include <stdio.h>
 #include <string.h>
-#include "if_queue.h"
+#include "device.h"
+#include "..\hp300\isr.h"
+#include "..\..\sys\mbuf.h"
+#include "..\..\net\if.h"
+#include "..\..\net\if_types.h"
+#include "..\..\netinet\if_ether.h"
+
+#define NLE 32
+extern ifqmaxlen;
+
 
 /* offsets for:	   ID,   REGS,    MEM,  NVRAM */
 int	lestd[] = { 0, 0x4000, 0x8000, 0xC008 };
@@ -60,50 +67,43 @@ struct	le_softc {
 		(dst) = (src); \
 	} while (((cntl)->ler0_status & LE_ACK) == 0);
 
-
-struct hp_device
-{
-	int hp_unit;
-	caddr_t hp_addr;
-};
-
 int leattach(struct hp_device *hd)
 {
-    struct le_softc &sc = le_softc[hd->hp_unit];
-    struct ifnet &ifnet = sc.sc_if;
+    struct le_softc *sc = &le_softc[hd->hp_unit];
+    struct ifnet *ifnet = &sc->sc_if;
 
-    memcpy(sc.sc_addr, hd->hp_addr, sizeof (u_char));
-    ifnet.if_name = "le";
-	ifnet.if_next = nullptr;
-    ifnet.if_unit = hd->hp_unit;
-    ifnet.if_flags = IFF_SIMPLEX | IFF_BROADCAST | IFF_MULTICAST;
-    ifnet.if_snd.ifq_maxlen = ifqmaxlen;
+    memcpy(sc->sc_addr, hd->hp_addr, sizeof (u_char));
+    ifnet->if_name = "le";
+	ifnet->if_next = NULL;
+    ifnet->if_unit = hd->hp_unit;
+    ifnet->if_flags = IFF_SIMPLEX | IFF_BROADCAST | IFF_MULTICAST;
+    ifnet->if_snd.ifq_maxlen = ifqmaxlen;
 
-    ifnet.if_type = IFT_ETHER;
-    ifnet.if_addrlen = 6;
-    ifnet.if_hdrlen = 14;
-    ifnet.if_mtu = ETHERMTU;
-    ifnet.if_metric = 0;
+    ifnet->if_type = IFT_ETHER;
+    ifnet->if_addrlen = 6;
+    ifnet->if_hdrlen = 14;
+    ifnet->if_mtu = ETHERMTU;
+    ifnet->if_metric = 0;
 
-    ifnet.if_init = leinit;
-    ifnet.if_start = lestart;
-    ifnet.if_ioctl = leioctl;
-    ifnet.if_reset = lereset;
+    ifnet->if_init = leinit;
+    ifnet->if_start = lestart;
+    ifnet->if_ioctl = leioctl;
+    ifnet->if_reset = lereset;
 
-    if (ifnet.if_type == IFT_ETHER)
-        ifnet.if_output = ether_output;
+    if (ifnet->if_type == IFT_ETHER)
+        ifnet->if_output = ether_output;
 
-    if_attach(&ifnet);
+    if_attach(ifnet);
 
 	return 0;
 }
 
-int leinit(int)
+int leinit(int a)
 {
 	return 0;
 }
 
-int lereset(int)
+int lereset(int a)
 {
 	return 0;
 }
@@ -148,12 +148,14 @@ int ledrinit(ler2, le)
 	register struct lereg2 *ler2;
 	register struct le_softc *le;
 {
+
+    return 0;
 }
 
 int leintr(unit)
 	register int unit;
 {
-
+	return 0;
 }
 
 /*
@@ -163,7 +165,7 @@ int leintr(unit)
 int lexint(unit)
 	register int unit;
 {
-
+	return 0;
 }
 
 /*
@@ -175,6 +177,7 @@ int lexint(unit)
 int lerint(unit)
 	int unit;
 {
+	return 0;
 }
 
 /*
@@ -185,6 +188,7 @@ int leput(lebuf, m)
 	register char *lebuf;
 	register struct mbuf *m;
 {
+	return 0; 
 }
 
 leerror(unit, stat)
