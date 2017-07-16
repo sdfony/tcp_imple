@@ -10,7 +10,6 @@
 #define NLE 32
 extern ifqmaxlen;
 
-
 /* offsets for:	   ID,   REGS,    MEM,  NVRAM */
 int	lestd[] = { 0, 0x4000, 0x8000, 0xC008 };
 

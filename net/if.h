@@ -40,6 +40,7 @@ struct ifnet
     short if_timer;
     int if_pcount;
     caddr_t if_bpf;
+
 	struct	if_data 
     {
 /* generic interface information */
@@ -62,7 +63,7 @@ struct ifnet
 		u_long	ifi_iqdrops;	/* dropped on input, this interface */
 		u_long	ifi_noproto;	/* destined for unsupported protocol */
 		struct	timeval ifi_lastchange;/* last updated */
-	}	if_data;
+	} if_data;
 
     int(*if_init)(int);
     int(*if_output)(struct ifnet *, struct mbuf *,
