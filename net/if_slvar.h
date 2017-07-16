@@ -2,6 +2,7 @@
 #define IF_SLVAL_H
 
 #include "if.h"
+#include "slcompress.h"
 
 /*
  * Definitions for SLIP interface data structures
@@ -21,9 +22,7 @@ struct sl_softc {
 	long	sc_lasttime;		/* last time a char arrived */
 	long	sc_abortcount;		/* number of abort esacpe chars */
 	long	sc_starttime;		/* time of first abort in window */
-#ifdef INET				/* XXX */
 	struct	slcompress sc_comp;	/* tcp compression data */
-#endif
 	caddr_t	sc_bpf;			/* BPF data */
 };
 

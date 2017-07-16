@@ -71,7 +71,7 @@ int leattach(struct hp_device *hd)
     struct le_softc *sc = &le_softc[hd->hp_unit];
     struct ifnet *ifnet = &sc->sc_if;
 
-    memcpy(sc->sc_addr, hd->hp_addr, sizeof (u_char));
+    memcpy(sc->sc_addr, hd->hp_addr, sizeof (sc->sc_addr));
     ifnet->if_name = "le";
 	ifnet->if_next = NULL;
     ifnet->if_unit = hd->hp_unit;
@@ -88,10 +88,9 @@ int leattach(struct hp_device *hd)
     ifnet->if_start = lestart;
     ifnet->if_ioctl = leioctl;
     ifnet->if_reset = lereset;
+    ifnet->if_output = ether_output;
 
-    if (ifnet->if_type == IFT_ETHER)
-        ifnet->if_output = ether_output;
-
+/*    bpfattach();*/
     if_attach(ifnet);
 
 	return 0;
