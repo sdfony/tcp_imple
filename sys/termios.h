@@ -204,23 +204,20 @@ struct termios {
 #define TCIOFF		3
 #define TCION		4
 
-#include <sys/cdefs.h>
+#include "cdefs.h"
 
 __BEGIN_DECLS
-speed_t	cfgetispeed(const struct termios *));
-speed_t	cfgetospeed(const struct termios *));
-int	cfsetispeed(struct termios *, speed_t));
-int	cfsetospeed(struct termios *, speed_t));
-int	tcgetattr(int, struct termios *));
-int	tcsetattr(int, int, const struct termios *));
-int	tcdrain(int));
-int	tcflow(int, int));
-int	tcflush(int, int));
-int	tcsendbreak(int, int));
+speed_t	cfgetospeed(const struct termios *);
+int	cfsetospeed(struct termios *, speed_t);
+int	tcsetattr(int, int, const struct termios *);
+int	tcdrain(int);
+int	tcflow(int, int);
+int	tcflush(int, int);
+int	tcsendbreak(int, int);
 
 #ifndef _POSIX_SOURCE
-void	cfmakeraw(struct termios *));
-int	cfsetspeed(struct termios *, speed_t));
+void	cfmakeraw(struct termios *);
+int	cfsetspeed(struct termios *, speed_t);
 #endif /* !_POSIX_SOURCE */
 __END_DECLS
 

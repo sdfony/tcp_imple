@@ -1,5 +1,7 @@
 #include "if.h"
 #include "..\sys\mbuf.h"
+#include "..\net\bpf.h"
+#include "..\net\slip.h"
 #include "if_slvar.h"
 #include "if_types.h"
 #include <stddef.h>
@@ -73,7 +75,6 @@
 #define TRANS_FRAME_END	 	0xdc		/* transposed frame end */
 #define TRANS_FRAME_ESCAPE 	0xdd		/* transposed frame esc */
 
-#define SLMTU 296
 struct sl_softc sl_softc[NSL];
 
 #define FRAME_END	 	0xc0		/* Frame End */
@@ -81,6 +82,7 @@ struct sl_softc sl_softc[NSL];
 #define TRANS_FRAME_END	 	0xdc		/* transposed frame end */
 #define TRANS_FRAME_ESCAPE 	0xdd		/* transposed frame esc */
 
+extern int ifqmaxlen;
 void slattach()
 {
     int i = 0;
@@ -91,8 +93,8 @@ void slattach()
         sc->sc_if.if_name = "sl";
 		sc->sc_if.if_next = NULL;
 		sc->sc_if.if_unit = i++;
-        sc->sc_if.if_flags = IFF_POINTOPOINT;
-        sc->sc_if.if_snd.ifq_maxlen = 50;
+        sc->sc_if.if_flags = IFF_POINTOPOINT | IFF_MULTICAST | SC_AUTOCOMP;
+        sc->sc_if.if_snd.ifq_maxlen = ifqmaxlen;
 
         sc->sc_if.if_mtu = SLMTU;
         sc->sc_if.if_type = IFT_SLIP;
@@ -106,6 +108,7 @@ void slattach()
         sc->sc_if.if_ioctl = slioctl;
 
 		if_attach(&sc->sc_if);
+        bpfattach(sc->sc_bpf, &sc->sc_if, DLT_SLIP, SLIP_HDRLEN);
     }
 }
 

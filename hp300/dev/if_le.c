@@ -6,6 +6,7 @@
 #include "..\..\net\if.h"
 #include "..\..\net\if_types.h"
 #include "..\..\netinet\if_ether.h"
+#include "..\..\net\bpf.h"
 
 #define NLE 32
 extern ifqmaxlen;
@@ -90,7 +91,7 @@ int leattach(struct hp_device *hd)
     ifnet->if_reset = lereset;
     ifnet->if_output = ether_output;
 
-/*    bpfattach();*/
+    bpfattach(&ifnet->if_bpf, ifnet, DLT_EN10MB, sizeof(struct ether_header));
     if_attach(ifnet);
 
 	return 0;
