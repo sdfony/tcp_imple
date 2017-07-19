@@ -104,7 +104,6 @@ bpf_attachd(d, bp)
 	struct bpf_d *d;
 	struct bpf_if *bp;
 {
-    return 0;
 }
 
 /*
@@ -114,7 +113,6 @@ static void
 bpf_detachd(d)
 	struct bpf_d *d;
 {
-    return 0;
 }
 
 

@@ -267,8 +267,5 @@ int	looutput(struct ifnet *,
 	   struct mbuf *, struct sockaddr *, struct rtentry *);
 void	lortrequest(int, struct rtentry *, struct sockaddr *);
 
-// global variables
-struct	ifnet	*ifnet;
-
 
 #endif  // NET_IF_H

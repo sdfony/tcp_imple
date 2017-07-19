@@ -122,6 +122,13 @@ int leioctl(struct ifnet *ifp, int cmd, caddr_t data)
 	return 0;
 }
 
+void ether_ifattach(struct ifnet *ifp)
+{}
+
+void	ether_input(struct ifnet *ifp, struct ether_header *eh, struct mbuf *m)
+{}
+
+
 int ether_output(struct ifnet *ifp,
 	struct mbuf *m0,
 	struct sockaddr *dst,

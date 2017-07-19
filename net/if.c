@@ -6,8 +6,10 @@
 #include <stdio.h>
 #include "..\sys\mbuf.h"
 
-int ifqmaxlen = IFQ_MAXLEN;
+// global variables
 int if_index = 0;
+struct	ifnet	*ifnet;
+int ifqmaxlen = IFQ_MAXLEN;
 struct ifaddr **ifnet_addrs;
 
 int ifconf(int cmd, caddr_t data)
@@ -33,33 +35,29 @@ int ifioctl(struct socket *so, int cmd,
 void if_attach(struct ifnet *ifp)
 {
     static int if_indexlim = 8;
-    static int i = 0;
-	struct ifnet *iflast = ifnet;
+	struct ifnet **iflast = &ifnet;
 	char buf[12] = "";
 
-	while (iflast && iflast->if_next)
-    {
-        iflast = iflast->if_next;
-    }
+    while (*iflast)
+        iflast = &(*iflast)->if_next;
+    *iflast = ifp;
 
-    if (if_indexlim == 0)
-        if_indexlim = 1;
-    if (if_indexlim == i)
-        if_indexlim <= 1;
-    ifnet_addrs = (struct ifaddr **)realloc(ifnet_addrs,
-            sizeof(struct ifaddr *) * if_indexlim);
+    if (ifnet_addrs == NULL || if_index >= if_indexlim)
+        if_indexlim <<= 1;
+
+    ifnet_addrs = realloc(ifnet_addrs,
+            sizeof(*ifnet_addrs) * if_indexlim);
 
     ifp->if_index = ++if_index;
-
     ifp->if_addrlist = (struct ifaddr *)calloc(1, sizeof (struct ifaddr));
 
     // set the member of struct ifaddr pointed by if_addrlist
 	struct ifaddr *ifa = ifp->if_addrlist;
     ifa->ifa_next = NULL;
     ifa->ifa_ifp = ifp;
-    ifa->ifa_addr = (struct sockaddr *)calloc(2, sizeof (struct sockaddr_dl));
-    //ifa->ifa_rtrequest = ;
-    //ifa->ifa_flags = ;
+    ifa->ifa_addr = (struct sockaddr *)calloc(2, sizeof (*ifa->ifa_addr));
+    ifa->ifa_rtrequest = NULL;
+    ifa->ifa_flags = ifp->if_flags;
     ifa->ifa_refcnt++;
     ifa->ifa_metric = ifp->if_metric;
 
@@ -74,10 +72,11 @@ void if_attach(struct ifnet *ifp)
     strcat(dl_addr->sdl_data, buf);
     dl_addr->sdl_nlen = strlen(dl_addr->sdl_data);
     dl_addr->sdl_alen = 6;
-    //dl_addr->sdl_slen = ;
+    dl_addr->sdl_slen = 0;
 
     struct sockaddr_dl *dl_netmask = dl_addr + 1;
-    dl_netmask->sdl_len = offsetof(struct sockaddr_dl, sdl_data[0]) + dl_addr->sdl_nlen;
+    int masklen = offsetof(struct sockaddr_dl, sdl_data[0]) + dl_addr->sdl_nlen;
+    dl_netmask->sdl_len = masklen;
     for (int j = 0; j < dl_addr->sdl_nlen; j++)
         dl_netmask->sdl_data[j] = 0xff;
 
@@ -85,11 +84,9 @@ void if_attach(struct ifnet *ifp)
 
     //add if_addrlist to the global variable "ifnext_addrs"
     ifnet_addrs[if_index - 1] = ifa;
-    //add ifp to the global struct ifnet list pointed by ifnet;
-    ifp->if_next = iflast->if_next;
-    iflast->if_next = ifp;
 
-    i++;
+    if (ifp->if_output == ether_output)
+        ether_ifattach(ifp);
 }
 
 void ifinit()
