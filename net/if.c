@@ -42,11 +42,13 @@ void if_attach(struct ifnet *ifp)
         iflast = &(*iflast)->if_next;
     *iflast = ifp;
 
-    if (ifnet_addrs == NULL || if_index >= if_indexlim)
+    if (ifnet_addrs == NULL)
+        ifnet_addrs = calloc(1, sizeof(*ifnet_addrs) * if_indexlim);
+    if (if_index >= if_indexlim)
+    {
         if_indexlim <<= 1;
-
-    ifnet_addrs = realloc(ifnet_addrs,
-            sizeof(*ifnet_addrs) * if_indexlim);
+        ifnet_addrs = realloc(ifnet_addrs, sizeof(*ifnet_addrs) * if_indexlim);
+    }
 
     ifp->if_index = ++if_index;
     ifp->if_addrlist = (struct ifaddr *)calloc(1, sizeof (struct ifaddr));
@@ -55,7 +57,7 @@ void if_attach(struct ifnet *ifp)
 	struct ifaddr *ifa = ifp->if_addrlist;
     ifa->ifa_next = NULL;
     ifa->ifa_ifp = ifp;
-    ifa->ifa_addr = (struct sockaddr *)calloc(2, sizeof (*ifa->ifa_addr));
+    ifa->ifa_addr = (struct sockaddr *)calloc(2, sizeof (struct sockaddr_dl));
     ifa->ifa_rtrequest = NULL;
     ifa->ifa_flags = ifp->if_flags;
     ifa->ifa_refcnt++;

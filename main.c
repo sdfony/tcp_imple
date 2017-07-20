@@ -1,16 +1,21 @@
+#include "test.h"
 #include "sys\mbuf.h"
-#include <string.h>
-#include <stdio.h>
 #include "net\if.h"
+#include "net\if_slvar.h"
 
 #define N 1024
 
-static void  print_mbuf(struct mbuf *m, int offset, int len);
-static void print_mbuf_content(struct mbuf *m);
+#define CHAPTER1
+#define CHAPTER2
+#define CHAPTER3
+#define CHAPTER3
+#define CHAPTER4
 
 int main(void)
 {
     char buf[N] = {'\0'};
+
+#ifdef CHAPTER2
     struct mbuf *m1;
     struct mbuf *m2;
 
@@ -48,38 +53,15 @@ int main(void)
     struct mbuf *m4 = m_devget(buf, 20, 5, &ifnet1, NULL);
 	print_mbuf(m4, 0, 0);
 	print_mbuf_content(m4);
+#endif  // CHAPTER2
+
+#ifdef CHAPTER3
+loopattach(6);
+slattach();
+#endif  // CHAPTER3
+
+#ifdef CHAPTER4
+#endif  // CHAPTER4
 
     return 0;
-}
-
-static void inline print_mbuf(struct mbuf *m, int offset, int len)
-{
-    while (m->m_len < offset)
-    {
-        m = m->m_next;
-    }
-
-	caddr_t p = mtod(m, caddr_t) + offset;
-    while (m->m_len < len)
-    {
-        printf("%s\n", p);
-
-        offset = 0;
-        len -= m->m_len;
-        m = m->m_next;
-    }
-    printf("%s\n", p);
-    offset = 0;
-}
-
-static void inline print_mbuf_content(struct mbuf *m)
-{
-    int i = 0, total_len = 0;
-    while (m)
-    {
-        printf("%d mbuf: p=0x%p, m_len=%d\n", ++i, mtod(m, caddr_t), m->m_len);
-        total_len += m->m_len;
-		m = m->m_next;
-    }
-    printf("total_len=%d\n\n", total_len);
 }

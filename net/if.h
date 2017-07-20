@@ -232,7 +232,6 @@ struct ifaddr
 #define	IFQ_MAXLEN	50
 #define	IFNET_SLOWHZ	1		/* granularity is 1 second */
 
-
 void	ether_ifattach(struct ifnet *);
 void	ether_input(struct ifnet *, struct ether_header *, struct mbuf *);
 int	    ether_output(struct ifnet *,
