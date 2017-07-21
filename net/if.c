@@ -34,6 +34,8 @@ int ifioctl(struct socket *so, int cmd,
 
 void if_attach(struct ifnet *ifp)
 {
+    static int i = 0;
+    printf("is called: %d\n", i++);
     static int if_indexlim = 8;
 	struct ifnet **iflast = &ifnet;
 	char buf[12] = "";

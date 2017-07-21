@@ -123,3 +123,31 @@ void print_sockaddr_dl(struct sockaddr_dl *sip)
         printf("sdl_data: %s\n", sip->sdl_data);
     }
 }
+
+void print_i_global_ifnet(int index)
+{
+    extern struct ifnet *ifnet;
+
+    for (int i = 0; i < index && ifnet; i++)
+    {
+        ifnet = ifnet->if_next;
+    }
+    if (ifnet == NULL)
+        printf("index is out of range of global ifnet\n");
+
+    print_ifnet(ifnet);
+}
+
+void print_i_global_ifaddr(int index)
+{
+    extern struct ifaddr **ifnet_addrs;
+
+    for (int i = 0; i < index && ifnet_addrs; i++)
+    {
+        ifnet_addrs++;
+    }
+    if (ifnet_addrs == NULL)
+        printf("index is out of range of global ifnet_addrs\n");
+
+    print_ifaddr(*ifnet_addrs);
+}

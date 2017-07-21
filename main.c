@@ -57,7 +57,12 @@ int main(void)
 
 #ifdef CHAPTER3
 loopattach(6);
+/*print_global_ifnet();*/
+print_global_ifaddr();
+
 slattach();
+/*print_global_ifnet();*/
+print_global_ifaddr();
 #endif  // CHAPTER3
 
 #ifdef CHAPTER4
