@@ -11,6 +11,8 @@ int if_index = 0;
 struct	ifnet	*ifnet;
 int ifqmaxlen = IFQ_MAXLEN;
 struct ifaddr **ifnet_addrs;
+int if_indexlim = 8;
+
 
 int ifconf(int cmd, caddr_t data)
 {
@@ -34,9 +36,6 @@ int ifioctl(struct socket *so, int cmd,
 
 void if_attach(struct ifnet *ifp)
 {
-    static int i = 0;
-    printf("is called: %d\n", i++);
-    static int if_indexlim = 8;
 	struct ifnet **iflast = &ifnet;
 	char buf[12] = "";
 
@@ -50,6 +49,7 @@ void if_attach(struct ifnet *ifp)
     {
         if_indexlim <<= 1;
         ifnet_addrs = realloc(ifnet_addrs, sizeof(*ifnet_addrs) * if_indexlim);
+        memset(ifnet_addrs+if_indexlim/2, 0, sizeof(*ifnet_addrs) * if_indexlim / 2);
     }
 
     ifp->if_index = ++if_index;

@@ -6,7 +6,7 @@
 
 struct ifnet loif;
 
-int loioctl(struct ifnet *, int, caddr_t);
+int loioctl(struct ifnet *ifp, int, caddr_t);
 
 void loopattach(int n)
 {

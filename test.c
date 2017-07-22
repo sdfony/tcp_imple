@@ -40,12 +40,14 @@ void print_mbuf_content(struct mbuf *m)
 void print_global_ifnet()
 {
     extern struct ifnet *ifnet;
+    struct ifnet *ifnet_backup = ifnet;
 
     while (ifnet)
     {
         print_ifnet(ifnet);
         ifnet = ifnet->if_next;
     }
+    ifnet = ifnet_backup;
 }
 
 void print_ifnet(struct ifnet *ifp)
@@ -77,19 +79,23 @@ void print_ifnet(struct ifnet *ifp)
         printf("if_omcasts: %d\n", ifp->if_omcasts);
         printf("if_iqdrops: %d\n", ifp->if_iqdrops);
         printf("if_noproto: %d\n", ifp->if_noproto);
-        printf("if_lastchange: %d\n", ifp->if_lastchange);
+        printf("if_lastchange: _1\n", ifp->if_lastchange);
     }
 }
 
 void print_global_ifaddr()
 {
+    extern int if_indexlim;
     extern struct ifaddr **ifnet_addrs;
-
-    while (*ifnet_addrs)
+    struct ifaddr **ifnet_addrs_backup = ifnet_addrs;
+   
+    int i = 0;
+    while (*ifnet_addrs && i++ < if_indexlim)
     {
         print_ifaddr(*ifnet_addrs);
         ifnet_addrs++;
     }
+    ifnet_addrs = ifnet_addrs_backup;
 }
 
 void print_ifaddr(struct ifaddr *addrp)
@@ -127,27 +133,29 @@ void print_sockaddr_dl(struct sockaddr_dl *sip)
 void print_i_global_ifnet(int index)
 {
     extern struct ifnet *ifnet;
+    struct ifnet *ifnet_traverse = ifnet;
 
-    for (int i = 0; i < index && ifnet; i++)
+    for (int i = 0; i < index && ifnet_traverse; i++)
     {
-        ifnet = ifnet->if_next;
+        ifnet_traverse = ifnet_traverse->if_next;
     }
-    if (ifnet == NULL)
+    if (ifnet_traverse == NULL)
         printf("index is out of range of global ifnet\n");
 
-    print_ifnet(ifnet);
+    print_ifnet(ifnet_traverse);
 }
 
 void print_i_global_ifaddr(int index)
 {
     extern struct ifaddr **ifnet_addrs;
+    struct ifaddr **ifnet_addrs_traverse = ifnet_addrs;
 
-    for (int i = 0; i < index && ifnet_addrs; i++)
+    for (int i = 0; i < index && ifnet_addrs_traverse; i++)
     {
-        ifnet_addrs++;
+        ifnet_addrs_traverse++;
     }
-    if (ifnet_addrs == NULL)
+    if (ifnet_addrs_traverse == NULL)
         printf("index is out of range of global ifnet_addrs\n");
 
-    print_ifaddr(*ifnet_addrs);
+    print_ifaddr(*ifnet_addrs_traverse);
 }
