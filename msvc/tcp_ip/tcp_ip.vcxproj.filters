@@ -52,6 +52,12 @@
     <Filter Include="Source Files\test">
       <UniqueIdentifier>{4ae1b888-2478-44f8-80b4-ee4b116a90cb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\netiso">
+      <UniqueIdentifier>{9ae7e10e-a6a2-4b33-9513-0f1fc316b8e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\netiso">
+      <UniqueIdentifier>{a2df7deb-817e-4105-ae9b-7fe90fdf6b7a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\net\bpf.h">
@@ -147,6 +153,24 @@
     <ClInclude Include="..\..\test.h">
       <Filter>Header Files\test</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\netiso\iso.h">
+      <Filter>Header Files\netiso</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\netiso\iso_var.h">
+      <Filter>Header Files\netiso</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\radix.h">
+      <Filter>Header Files\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\route.h">
+      <Filter>Header Files\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\protosw.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\domain.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\net\bpf.c">
@@ -184,6 +208,18 @@
     </ClCompile>
     <ClCompile Include="..\..\test.c">
       <Filter>Source Files\test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\radix.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\route.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\kern\uipc_proto.c">
+      <Filter>Source Files\kern</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\kern\uipc_domain.c">
+      <Filter>Source Files\kern</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

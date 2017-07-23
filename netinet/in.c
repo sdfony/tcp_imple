@@ -47,10 +47,6 @@ struct ifaddr *ifaof_ifpforaddr(struct sockaddr *addr, struct ifnet *ifp)
 {
     return NULL;
 }
-struct ifaddr *ifa_ifwithroute(int flags, struct sockaddr *dst, struct sockaddr *gateway)
-{
-    return NULL;
-}
 
 struct ifnet *ifunit(char *name)
 {

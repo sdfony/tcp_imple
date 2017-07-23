@@ -121,6 +121,8 @@
     <ClInclude Include="..\..\netinet\in_systm.h" />
     <ClInclude Include="..\..\netinet\in_var.h" />
     <ClInclude Include="..\..\netinet\ip.h" />
+    <ClInclude Include="..\..\netiso\iso.h" />
+    <ClInclude Include="..\..\netiso\iso_var.h" />
     <ClInclude Include="..\..\net\bpf.h" />
     <ClInclude Include="..\..\net\bpfdesc.h" />
     <ClInclude Include="..\..\net\if.h" />
@@ -128,14 +130,18 @@
     <ClInclude Include="..\..\net\if_dl.h" />
     <ClInclude Include="..\..\net\if_slvar.h" />
     <ClInclude Include="..\..\net\if_types.h" />
+    <ClInclude Include="..\..\net\radix.h" />
+    <ClInclude Include="..\..\net\route.h" />
     <ClInclude Include="..\..\net\slcompress.h" />
     <ClInclude Include="..\..\net\slip.h" />
     <ClInclude Include="..\..\sys\cdefs.h" />
     <ClInclude Include="..\..\sys\device.h" />
+    <ClInclude Include="..\..\sys\domain.h" />
     <ClInclude Include="..\..\sys\ioccom.h" />
     <ClInclude Include="..\..\sys\malloc.h" />
     <ClInclude Include="..\..\sys\mbuf.h" />
     <ClInclude Include="..\..\sys\myalgo.h" />
+    <ClInclude Include="..\..\sys\protosw.h" />
     <ClInclude Include="..\..\sys\select.h" />
     <ClInclude Include="..\..\sys\socket.h" />
     <ClInclude Include="..\..\sys\termios.h" />
@@ -149,7 +155,9 @@
   <ItemGroup>
     <ClCompile Include="..\..\hp300\dev\if_le.c" />
     <ClCompile Include="..\..\kern\init_main.c" />
+    <ClCompile Include="..\..\kern\uipc_domain.c" />
     <ClCompile Include="..\..\kern\uipc_mbuf.c" />
+    <ClCompile Include="..\..\kern\uipc_proto.c" />
     <ClCompile Include="..\..\main.c" />
     <ClCompile Include="..\..\netinet\in.c" />
     <ClCompile Include="..\..\net\bpf.c" />
@@ -157,6 +165,8 @@
     <ClCompile Include="..\..\net\if_ethersubr.c" />
     <ClCompile Include="..\..\net\if_loop.c" />
     <ClCompile Include="..\..\net\if_sl.c" />
+    <ClCompile Include="..\..\net\radix.c" />
+    <ClCompile Include="..\..\net\route.c" />
     <ClCompile Include="..\..\net\slcompress.c" />
     <ClCompile Include="..\..\test.c" />
   </ItemGroup>

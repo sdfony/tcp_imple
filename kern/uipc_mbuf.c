@@ -3,6 +3,10 @@
 #include <string.h>
 #include <stdbool.h>
 
+struct	mbuf *mbutl;
+char	*mclrefcnt;
+
+
 int mbtypes[] = {				/* XXX */
 	M_FREE,		/* MT_FREE	0	   should be on free list */
 	M_MBUF,		/* MT_DATA	1	   dynamic (data) allocation */
