@@ -94,10 +94,35 @@ void if_attach(struct ifnet *ifp)
 
 void ifinit()
 {
+    struct ifnet *global_ifnet = ifnet;
+
+    while (global_ifnet)
+    {
+        global_ifnet->if_snd.ifq_maxlen = ifqmaxlen;
+        global_ifnet = global_ifnet->if_next;
+    }
+
+    if_slowtimo(0);
 }
 
 void if_slowtimo(void *arg)
 {
+    struct ifnet *global_ifnet = ifnet;
+
+    while (global_ifnet)
+    {
+        if (global_ifnet->if_timer == 0)
+            continue;
+        if (--global_ifnet->if_timer == 0)
+            continue;
+
+        if (global_ifnet->if_watchdog)
+            global_ifnet->if_watchdog(global_ifnet->if_unit);
+
+        global_ifnet = global_ifnet->if_next;
+    }
+
+    /*timeout(if_slowtimo, (void*)0, hz/IFNET_SLOWHZ);*/
 }
 
 void if_freenameindex(struct if_nameindex *a)

@@ -31,6 +31,8 @@
 *.out
 *.app
 
+*.suo
+*.db
 *.log
 *.idb
 *.pdb
@@ -38,5 +40,5 @@
 *.lastbuildstate
 
 # msvc directory
-/msvc/Debug
-/msvc/x64
+/msvc/tcp_ip/Debug
+/msvc/tcp_ip/x64

@@ -1,5 +1,10 @@
 #include "../sys/types.h"
+#include "../netinet/if_ether.h"
+#include "if.h"
+#include "if_dl.h"
+#include "if_types.h"
 #include <stdlib.h>
+#include <string.h>
 
 extern struct ifqueue pkintrq;
 
@@ -52,9 +57,22 @@ ether_sprintf(ap)
  * Perform common duties while attaching to interface list
  */
 void
-ether_ifattach(ifp)
-	register struct ifnet *ifp;
+ether_ifattach(struct ifnet *ifp)
 {
+    struct ifaddr *addrlist = ifp->if_addrlist;
+
+    ifp->if_type = IFT_ETHER;
+    ifp->if_addrlen = 6;
+    ifp->if_hdrlen = 14;
+    ifp->if_mtu = ETHERMTU;
+
+    for (; addrlist; addrlist = addrlist->ifa_next)
+    {
+        struct sockaddr_dl *dl = (struct sockaddr_dl *)(addrlist->ifa_addr);
+        dl->sdl_alen = ifp->if_addrlen;
+
+        memcpy(LLADDR(dl), ((struct arpcom*)ifp)->ac_enaddr, sizeof(((struct arpcom*)ifp)->ac_enaddr));
+    }
 }
 
 u_char	ether_ipmulticast_min[6] = { 0x01, 0x00, 0x5e, 0x00, 0x00, 0x00 };

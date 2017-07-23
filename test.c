@@ -79,7 +79,7 @@ void print_ifnet(struct ifnet *ifp)
         printf("if_omcasts: %d\n", ifp->if_omcasts);
         printf("if_iqdrops: %d\n", ifp->if_iqdrops);
         printf("if_noproto: %d\n", ifp->if_noproto);
-        printf("if_lastchange: _1\n", ifp->if_lastchange);
+        printf("if_lastchange: _1\n");
     }
 }
 
