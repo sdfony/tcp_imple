@@ -31,5 +31,12 @@
 *.out
 *.app
 
+*.log
+*.idb
+*.pdb
+*.tlog
+*.lastbuildstate
+
 # msvc directory
-/msvc
+/msvc/Debug
+/msvc/x64

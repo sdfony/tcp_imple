@@ -85,12 +85,12 @@ void print_ifnet(struct ifnet *ifp)
 
 void print_global_ifaddr()
 {
-    extern int if_indexlim;
+    extern int if_index;
     extern struct ifaddr **ifnet_addrs;
     struct ifaddr **ifnet_addrs_backup = ifnet_addrs;
    
     int i = 0;
-    while (*ifnet_addrs && i++ < if_indexlim)
+    while (*ifnet_addrs && i++ < if_index)
     {
         print_ifaddr(*ifnet_addrs);
         ifnet_addrs++;

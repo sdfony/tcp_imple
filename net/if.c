@@ -11,8 +11,6 @@ int if_index = 0;
 struct	ifnet	*ifnet;
 int ifqmaxlen = IFQ_MAXLEN;
 struct ifaddr **ifnet_addrs;
-int if_indexlim = 8;
-
 
 int ifconf(int cmd, caddr_t data)
 {
@@ -38,6 +36,7 @@ void if_attach(struct ifnet *ifp)
 {
 	struct ifnet **iflast = &ifnet;
 	char buf[12] = "";
+    static int if_indexlim = 8;
 
     while (*iflast)
         iflast = &(*iflast)->if_next;

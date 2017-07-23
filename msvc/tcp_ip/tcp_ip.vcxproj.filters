@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\sys">
+      <UniqueIdentifier>{bae7405b-8c78-4d6f-a809-c39c193732aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\net">
+      <UniqueIdentifier>{89c236e1-16e3-4577-ac21-8c1d718c51d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\netinet">
+      <UniqueIdentifier>{794f451b-6da6-4c7c-aa28-49b78510daaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\net">
+      <UniqueIdentifier>{1961f1d8-bb8f-4a22-8040-f2c69327d564}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\netinet">
+      <UniqueIdentifier>{0c231185-1363-4716-b0c9-f53883aa7411}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\hp300">
+      <UniqueIdentifier>{03e15aba-e9d3-470a-9e33-6af884c37038}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\hp300\hp300">
+      <UniqueIdentifier>{a17b420e-3325-4d64-82c4-92830a5fcc97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\hp300\dev">
+      <UniqueIdentifier>{fded9294-c4f0-4d97-b420-cab7319c7215}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hp300">
+      <UniqueIdentifier>{8d0fe522-c062-420a-b620-871d8615771b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hp300\dev">
+      <UniqueIdentifier>{5da23864-9349-4063-a033-6bc9c983f253}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\kern">
+      <UniqueIdentifier>{2d66d400-ed5d-48d2-9020-627462871997}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\test">
+      <UniqueIdentifier>{b549f09b-2f36-4068-9fea-bc64cc447c8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test">
+      <UniqueIdentifier>{4ae1b888-2478-44f8-80b4-ee4b116a90cb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\net\bpf.h">
+      <Filter>Header Files\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\bpfdesc.h">
+      <Filter>Header Files\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\if.h">
+      <Filter>Header Files\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\if_arp.h">
+      <Filter>Header Files\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\if_dl.h">
+      <Filter>Header Files\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\if_slvar.h">
+      <Filter>Header Files\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\if_types.h">
+      <Filter>Header Files\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\slcompress.h">
+      <Filter>Header Files\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\slip.h">
+      <Filter>Header Files\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\netinet\if_ether.h">
+      <Filter>Header Files\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\netinet\in.h">
+      <Filter>Header Files\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\netinet\in_systm.h">
+      <Filter>Header Files\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\netinet\in_var.h">
+      <Filter>Header Files\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\netinet\ip.h">
+      <Filter>Header Files\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\cdefs.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\device.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\ioccom.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\malloc.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\mbuf.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\myalgo.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\select.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\socket.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\termios.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\time.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\tty.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\ttycom.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\ttydefaults.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\types.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\hp300\hp300\isr.h">
+      <Filter>Header Files\hp300\hp300</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\hp300\dev\device.h">
+      <Filter>Header Files\hp300\dev</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\test.h">
+      <Filter>Header Files\test</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\net\bpf.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\if.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\if_ethersubr.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\if_loop.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\if_sl.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\slcompress.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\netinet\in.c">
+      <Filter>Source Files\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\kern\uipc_mbuf.c">
+      <Filter>Source Files\kern</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\kern\init_main.c">
+      <Filter>Source Files\kern</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\hp300\dev\if_le.c">
+      <Filter>Source Files\hp300\dev</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\main.c">
+      <Filter>Source Files\test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test.c">
+      <Filter>Source Files\test</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
