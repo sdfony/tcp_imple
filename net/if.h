@@ -4,6 +4,8 @@
 #include "..\sys\time.h"
 #include "..\sys\socket.h"
 #include "..\netinet\in.h"
+#include "../sys/mbuf.h"
+
 
 #define	IFF_UP		0x1		/* interface is up */
 #define	IFF_BROADCAST	0x2		/* broadcast address valid */
@@ -196,9 +198,9 @@ struct ifaddr
 
 
 #define IF_QFULL(ifq)   \
-{   \
-	(ifq)->ifq_len >= (ifq)->ifq_maxlen;    \
-}
+(   \
+	(ifq)->ifq_len >= (ifq)->ifq_maxlen    \
+)
 
 #define IF_DROP(ifq)    \
 {   \
@@ -207,8 +209,8 @@ struct ifaddr
 
 #define IF_ENQUEUE(ifq, m)  \
 {   \
+	m->m_nextpkt = (ifq)->ifq_tail->m_nextpkt; \
 	(ifq)->ifq_tail->m_nextpkt = m; \
-	(ifq)->ifq_tail = m;    \
 	(ifq)->ifq_len++;   \
 }
 

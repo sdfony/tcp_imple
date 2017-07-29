@@ -109,6 +109,29 @@ int lereset(int a)
 
 void leread(int unit, char *buf, int len)
 {
+    struct le_softc *le = &le_softc[unit];
+    int datalen = len - sizeof(struct ether_header) - 4;
+    struct ether_header *eh = (struct ether_header *)buf;
+    struct mbuf *mbuf = (struct mbuf *)(eh + 1);
+
+    if (datalen < 0)
+    {
+        le->sc_runt++;
+        le->sc_if.if_ipackets++;
+    }
+  //  ntohl(89);
+    if (memcpy(eh->ether_dhost, etherbroadcastaddr, sizeof(etherbroadcastaddr)) == 0)
+        mbuf->m_flags |= IFF_MULTICAST;
+    if (eh->ether_dhost[0] & 0x1)
+        mbuf->m_flags |= IFF_BROADCAST;
+
+    struct mbuf *m = m_devget(mbuf, mbuf->m_pkthdr.len, 0, (struct ifnet*)le, NULL);
+    if (m == NULL)
+    {
+
+        return;
+    }
+    ether_input((struct ifnet *)le, eh, m);
 }
 
 

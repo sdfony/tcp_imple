@@ -58,6 +58,9 @@
     <Filter Include="Source Files\netiso">
       <UniqueIdentifier>{a2df7deb-817e-4105-ae9b-7fe90fdf6b7a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\hp300\include">
+      <UniqueIdentifier>{709627c7-b8d1-418f-837b-aee1d6d11a6c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\net\bpf.h">
@@ -171,6 +174,30 @@
     <ClInclude Include="..\..\sys\domain.h">
       <Filter>Header Files\sys</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\sys\proc.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\signal.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\ucred.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\errno.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\uio.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\resource.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\kernel.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\hp300\include\endian.h">
+      <Filter>Header Files\hp300\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\net\bpf.c">
@@ -220,6 +247,9 @@
     </ClCompile>
     <ClCompile Include="..\..\kern\uipc_domain.c">
       <Filter>Source Files\kern</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\netinet\ip_input.c">
+      <Filter>Header Files\netinet</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -26,6 +26,24 @@ ether_output(ifp, m0, dst, rt0)
 	struct sockaddr *dst;
 	struct rtentry *rt0;
 {
+    if (!(ifp->if_flags & IFF_UP))
+        return;
+
+    struct sockaddr_in *sin = (struct sockaddr_in *)dst;
+    switch (sin->sin_family)
+    {
+    case AF_INET:
+ //       if (!arpresolve())
+            return 0;
+        break;
+    case AF_ISO:
+        break;
+    case AF_UNSPEC:
+        break;
+    default:
+        break;
+    }
+
     return 0;
 }
 
@@ -40,6 +58,26 @@ ether_input(ifp, eh, m)
 	register struct ether_header *eh;
 	struct mbuf *m;
 {
+    struct timeval time;
+    struct ifqueue *ifq;
+    extern struct ifqueue ipintrq;
+
+    ifp->if_lastchange = time;
+    if (eh->ether_type == AF_INET)
+        ifq = &ipintrq;
+    else if (eh->ether_type == AF_ARP)
+    {
+        ifq = &arpintrq;
+    }
+
+    if (IF_QFULL(ifq))
+    {
+        IF_DROP(ifq);
+    }
+    else
+    {
+        IF_ENQUEUE(ifq, m);
+    }
 }
 
 /*

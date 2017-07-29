@@ -116,6 +116,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\hp300\dev\device.h" />
     <ClInclude Include="..\..\hp300\hp300\isr.h" />
+    <ClInclude Include="..\..\hp300\include\endian.h" />
     <ClInclude Include="..\..\netinet\if_ether.h" />
     <ClInclude Include="..\..\netinet\in.h" />
     <ClInclude Include="..\..\netinet\in_systm.h" />
@@ -137,12 +138,17 @@
     <ClInclude Include="..\..\sys\cdefs.h" />
     <ClInclude Include="..\..\sys\device.h" />
     <ClInclude Include="..\..\sys\domain.h" />
+    <ClInclude Include="..\..\sys\errno.h" />
     <ClInclude Include="..\..\sys\ioccom.h" />
+    <ClInclude Include="..\..\sys\kernel.h" />
     <ClInclude Include="..\..\sys\malloc.h" />
     <ClInclude Include="..\..\sys\mbuf.h" />
     <ClInclude Include="..\..\sys\myalgo.h" />
+    <ClInclude Include="..\..\sys\proc.h" />
     <ClInclude Include="..\..\sys\protosw.h" />
+    <ClInclude Include="..\..\sys\resource.h" />
     <ClInclude Include="..\..\sys\select.h" />
+    <ClInclude Include="..\..\sys\signal.h" />
     <ClInclude Include="..\..\sys\socket.h" />
     <ClInclude Include="..\..\sys\termios.h" />
     <ClInclude Include="..\..\sys\time.h" />
@@ -150,6 +156,8 @@
     <ClInclude Include="..\..\sys\ttycom.h" />
     <ClInclude Include="..\..\sys\ttydefaults.h" />
     <ClInclude Include="..\..\sys\types.h" />
+    <ClInclude Include="..\..\sys\ucred.h" />
+    <ClInclude Include="..\..\sys\uio.h" />
     <ClInclude Include="..\..\test.h" />
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +168,7 @@
     <ClCompile Include="..\..\kern\uipc_proto.c" />
     <ClCompile Include="..\..\main.c" />
     <ClCompile Include="..\..\netinet\in.c" />
+    <ClCompile Include="..\..\netinet\ip_input.c" />
     <ClCompile Include="..\..\net\bpf.c" />
     <ClCompile Include="..\..\net\if.c" />
     <ClCompile Include="..\..\net\if_ethersubr.c" />

@@ -40,4 +40,5 @@ struct	buf;
 struct	tty;
 struct	uio;
 
+
 #endif  // TYPES_H
