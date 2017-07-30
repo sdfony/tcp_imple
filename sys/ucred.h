@@ -4,6 +4,7 @@
 #include "types.h"
 #include "param.h"
 
+#define NGROUPS 16
 /*
  * Credentials.
  */

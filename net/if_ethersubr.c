@@ -1,10 +1,11 @@
+#include <stdlib.h>
+#include <string.h>
 #include "../sys/types.h"
 #include "../netinet/if_ether.h"
 #include "if.h"
 #include "if_dl.h"
 #include "if_types.h"
-#include <stdlib.h>
-#include <string.h>
+#include "../sys/time.h"
 
 extern struct ifqueue pkintrq;
 
@@ -27,7 +28,7 @@ ether_output(ifp, m0, dst, rt0)
 	struct rtentry *rt0;
 {
     if (!(ifp->if_flags & IFF_UP))
-        return;
+        return 0;
 
     struct sockaddr_in *sin = (struct sockaddr_in *)dst;
     switch (sin->sin_family)
@@ -59,8 +60,10 @@ ether_input(ifp, eh, m)
 	struct mbuf *m;
 {
     struct timeval time;
-    struct ifqueue *ifq;
+    struct ifqueue *ifq = NULL;
     extern struct ifqueue ipintrq;
+
+    time.tv_sec = time.tv_usec = 0;
 
     ifp->if_lastchange = time;
     if (eh->ether_type == AF_INET)

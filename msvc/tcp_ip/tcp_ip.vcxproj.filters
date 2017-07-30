@@ -198,6 +198,9 @@
     <ClInclude Include="..\..\hp300\include\endian.h">
       <Filter>Header Files\hp300\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\netinet\ip_var.h">
+      <Filter>Header Files\netinet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\net\bpf.c">
@@ -249,7 +252,7 @@
       <Filter>Source Files\kern</Filter>
     </ClCompile>
     <ClCompile Include="..\..\netinet\ip_input.c">
-      <Filter>Header Files\netinet</Filter>
+      <Filter>Source Files\netinet</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

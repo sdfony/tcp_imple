@@ -1,3 +1,6 @@
+#ifndef TEST_TEST_H
+#define TEST_TEST_H
+
 struct mbuf;
 struct ifnet;
 struct ifaddr;
@@ -15,3 +18,6 @@ void print_ifaddr(struct ifaddr *addrp);
 void print_global_ifaddr();
 void print_i_global_ifaddr(int i);
 void print_sockaddr_dl(struct sockaddr_dl *sip);
+
+#endif // TEST_TEST_H
+

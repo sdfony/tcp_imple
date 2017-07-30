@@ -11,6 +11,8 @@
 #include "ip.h"
 #include "in_var.h"
 #include "ip_var.h"
+#include "../sys/protosw.h"
+
 /*#include "ip_icmp.h"*/
 /*#include "in_pcb.h"*/
 

@@ -1,9 +1,9 @@
-#include "if.h"
-#include "if_types.h"
-#include "if_dl.h"
 #include <stddef.h>
 #include <string.h>
 #include <stdio.h>
+#include "if.h"
+#include "if_types.h"
+#include "if_dl.h"
 #include "..\sys\mbuf.h"
 
 // global variables

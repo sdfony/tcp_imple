@@ -30,6 +30,7 @@
 #define	MAXLOGNAME	12		/* max login name length */
 #define	MAXUPRC		CHILD_MAX	/* max simultaneous processes */
 #define	NCARGS		ARG_MAX		/* max bytes for an exec function */
+//#define	NGROUPS		16	/* max number groups */
 #define	NGROUPS		NGROUPS_MAX	/* max number groups */
 #define	NOFILE		OPEN_MAX	/* max open files per process */
 #define	NOGROUP		65535		/* marker for empty group set member */

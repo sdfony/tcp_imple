@@ -2,6 +2,8 @@
 #include "sys\mbuf.h"
 #include "net\if.h"
 #include "net\if_slvar.h"
+#include <stdio.h>
+#include <string.h>
 
 #define N 1024
 

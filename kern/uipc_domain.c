@@ -134,8 +134,8 @@ void pfctlinput(int cmd, struct sockaddr *sa)
     }
 }
 
-void ip_init()
-{
+// void ip_init()
+// {
 //     int ar[1024];
 // 
 //     struct protosw *pf = pffindproto(PF_INET, IPPROTO_RAW, SOCK_RAW);
@@ -157,7 +157,7 @@ void ip_init()
 //         if (pro->pr_protocol && pro->pr_type != SOCK_RAW)
 //             ar[pro->pr_protocol] = pro - domains->dom_protosw;
 //     }
-}
+//}
 
 void net_sysctl(int *name, u_int namelen, void *oldp,
         size_t *oldlenp, void *newp, size_t newlen, struct proc *p)

@@ -1,7 +1,6 @@
-#include "..\sys\mbuf.h"
-#include "..\sys\myalgo.h"
 #include <string.h>
 #include <stdbool.h>
+#include "..\sys\mbuf.h"
 
 struct	mbuf *mbutl;
 char	*mclrefcnt;

@@ -2,7 +2,7 @@
 #define NETINET_IP_VAR_H
 
 #include "in.h"
-
+#include "../hp300/include/endian.h"
 
 /*
  * Overlay for ip header used by other protocols (tcp, udp).
