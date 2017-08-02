@@ -201,6 +201,24 @@
     <ClInclude Include="..\..\netinet\ip_var.h">
       <Filter>Header Files\netinet</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\sys\callout.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\dkstat.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\resourcevar.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\systm.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\syslog.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\hp300\include\proc.h">
+      <Filter>Header Files\hp300\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\net\bpf.c">
@@ -253,6 +271,12 @@
     </ClCompile>
     <ClCompile Include="..\..\netinet\ip_input.c">
       <Filter>Source Files\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\netinet\if_ether.c">
+      <Filter>Source Files\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\kern\kern_clock.c">
+      <Filter>Source Files\kern</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

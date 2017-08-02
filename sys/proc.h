@@ -5,6 +5,7 @@
 #include "signal.h"
 #include "types.h"
 #include "select.h"			/* For struct selinfo. */
+#include "../hp300/include/proc.h"
 
 /*
  * One structure allocated per session.

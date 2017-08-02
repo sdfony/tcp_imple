@@ -28,8 +28,16 @@ ether_output(ifp, m0, dst, rt0)
 	struct rtentry *rt0;
 {
     if (!(ifp->if_flags & IFF_UP))
-        return 0;
+        return ENETDOWN;
 
+    struct timeval time;
+ //   struct ifqueue *ifq = NULL;
+ //   extern struct ifqueue ipintrq;
+
+    time.tv_sec = time.tv_usec = 0;
+    ifp->if_lastchange = time;
+
+  //  if ()
     struct sockaddr_in *sin = (struct sockaddr_in *)dst;
     switch (sin->sin_family)
     {
@@ -64,13 +72,21 @@ ether_input(ifp, eh, m)
     extern struct ifqueue ipintrq;
 
     time.tv_sec = time.tv_usec = 0;
+    ifp->if_ibytes += m->m_pkthdr.len + 14;
 
     ifp->if_lastchange = time;
     if (eh->ether_type == AF_INET)
+    {
         ifq = &ipintrq;
+    }
     else if (eh->ether_type == AF_ARP)
     {
         ifq = &arpintrq;
+    }
+    else
+    {
+        if (eh->ether_type < 65535)
+            return ;
     }
 
     if (IF_QFULL(ifq))
@@ -81,6 +97,7 @@ ether_input(ifp, eh, m)
     {
         IF_ENQUEUE(ifq, m);
     }
+
 }
 
 /*

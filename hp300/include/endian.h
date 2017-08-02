@@ -21,10 +21,33 @@
 #include "../../sys/cdefs.h"
 
 __BEGIN_DECLS
-unsigned long	htonl __P((unsigned long));
-unsigned short	htons __P((unsigned short));
-unsigned long	ntohl __P((unsigned long));
-unsigned short	ntohs __P((unsigned short));
+inline unsigned long	htonl __P((unsigned long l))
+{
+    unsigned char *c = (unsigned char *)&l;
+
+    return c[0] >> 3 | c[1] >> 1 | c[2] << 1 | c[3] << 3;
+}
+
+unsigned short	htons __P((unsigned short s))
+{
+    unsigned char *c = (unsigned char *)&s;
+
+    return c[0] >> 1 | c[1] << 1;
+}
+
+unsigned long	ntohl __P((unsigned long l))
+{
+    unsigned char *c = (unsigned char *)&l;
+
+    return c[0] >> 3 | c[1] >> 1 | c[2] << 1 | c[3] << 3;
+}
+
+unsigned short	ntohs __P((unsigned short s))
+{
+    unsigned char *c = (unsigned char *)&s;
+
+    return c[0] >> 1 | c[1] << 1;
+}
 __END_DECLS
 
 /*

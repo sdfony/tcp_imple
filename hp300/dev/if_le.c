@@ -7,6 +7,7 @@
 #include "..\..\net\if_types.h"
 #include "..\..\netinet\if_ether.h"
 #include "..\..\net\bpf.h"
+#include "..\include\endian.h"
 
 #define NLE 32
 extern ifqmaxlen;
@@ -114,6 +115,8 @@ void leread(int unit, char *buf, int len)
     struct ether_header *eh = (struct ether_header *)buf;
     struct mbuf *mbuf = (struct mbuf *)(eh + 1);
 
+    NTOHS(eh->ether_type);
+
     if (datalen < 0)
     {
         le->sc_runt++;
@@ -121,14 +124,13 @@ void leread(int unit, char *buf, int len)
     }
   //  ntohl(89);
     if (memcpy(eh->ether_dhost, etherbroadcastaddr, sizeof(etherbroadcastaddr)) == 0)
-        mbuf->m_flags |= IFF_MULTICAST;
-    if (eh->ether_dhost[0] & 0x1)
         mbuf->m_flags |= IFF_BROADCAST;
+    if (eh->ether_dhost[0] & 0x1)
+        mbuf->m_flags |= IFF_MULTICAST;
 
     struct mbuf *m = m_devget(mbuf, mbuf->m_pkthdr.len, 0, (struct ifnet*)le, NULL);
     if (m == NULL)
     {
-
         return;
     }
     ether_input((struct ifnet *)le, eh, m);

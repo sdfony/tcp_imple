@@ -133,6 +133,7 @@
     <ClInclude Include="..\..\hp300\dev\device.h" />
     <ClInclude Include="..\..\hp300\hp300\isr.h" />
     <ClInclude Include="..\..\hp300\include\endian.h" />
+    <ClInclude Include="..\..\hp300\include\proc.h" />
     <ClInclude Include="..\..\netinet\if_ether.h" />
     <ClInclude Include="..\..\netinet\in.h" />
     <ClInclude Include="..\..\netinet\in_systm.h" />
@@ -152,8 +153,10 @@
     <ClInclude Include="..\..\net\route.h" />
     <ClInclude Include="..\..\net\slcompress.h" />
     <ClInclude Include="..\..\net\slip.h" />
+    <ClInclude Include="..\..\sys\callout.h" />
     <ClInclude Include="..\..\sys\cdefs.h" />
     <ClInclude Include="..\..\sys\device.h" />
+    <ClInclude Include="..\..\sys\dkstat.h" />
     <ClInclude Include="..\..\sys\domain.h" />
     <ClInclude Include="..\..\sys\errno.h" />
     <ClInclude Include="..\..\sys\ioccom.h" />
@@ -164,9 +167,12 @@
     <ClInclude Include="..\..\sys\proc.h" />
     <ClInclude Include="..\..\sys\protosw.h" />
     <ClInclude Include="..\..\sys\resource.h" />
+    <ClInclude Include="..\..\sys\resourcevar.h" />
     <ClInclude Include="..\..\sys\select.h" />
     <ClInclude Include="..\..\sys\signal.h" />
     <ClInclude Include="..\..\sys\socket.h" />
+    <ClInclude Include="..\..\sys\syslog.h" />
+    <ClInclude Include="..\..\sys\systm.h" />
     <ClInclude Include="..\..\sys\termios.h" />
     <ClInclude Include="..\..\sys\time.h" />
     <ClInclude Include="..\..\sys\tty.h" />
@@ -180,10 +186,12 @@
   <ItemGroup>
     <ClCompile Include="..\..\hp300\dev\if_le.c" />
     <ClCompile Include="..\..\kern\init_main.c" />
+    <ClCompile Include="..\..\kern\kern_clock.c" />
     <ClCompile Include="..\..\kern\uipc_domain.c" />
     <ClCompile Include="..\..\kern\uipc_mbuf.c" />
     <ClCompile Include="..\..\kern\uipc_proto.c" />
     <ClCompile Include="..\..\main.c" />
+    <ClCompile Include="..\..\netinet\if_ether.c" />
     <ClCompile Include="..\..\netinet\in.c" />
     <ClCompile Include="..\..\netinet\ip_input.c" />
     <ClCompile Include="..\..\net\bpf.c" />

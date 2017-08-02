@@ -55,13 +55,13 @@ route_init()
  */
 void
 rtalloc(ro)
-	register struct route *ro;
+	struct route *ro;
 {
 }
 
 struct rtentry *
 rtalloc1(dst, report)
-	register struct sockaddr *dst;
+	struct sockaddr *dst;
 	int report;
 {
     return NULL;
