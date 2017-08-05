@@ -1,11 +1,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../sys/types.h"
+#include "../sys/errno.h"
 #include "../netinet/if_ether.h"
 #include "if.h"
 #include "if_dl.h"
+#include "route.h"
 #include "if_types.h"
 #include "../sys/time.h"
+#include "../hp300/include/endian.h"
 
 extern struct ifqueue pkintrq;
 
@@ -27,33 +30,110 @@ ether_output(ifp, m0, dst, rt0)
 	struct sockaddr *dst;
 	struct rtentry *rt0;
 {
+    short type;
+    int s, error = 0;
+    u_char edst[6];
+    struct mbuf *m = m0;
+    struct rtentry *rt;
+    struct mbuf *mcopy = (struct mbuf *)0;
+    struct ether_header *eh;
+    int off, len = m->m_pkthdr.len;
+    struct arpcom *ac = (struct arpcom *)ifp;
+
     if (!(ifp->if_flags & IFF_UP))
         return ENETDOWN;
 
-    struct timeval time;
+    extern struct timeval time;
  //   struct ifqueue *ifq = NULL;
  //   extern struct ifqueue ipintrq;
 
-    time.tv_sec = time.tv_usec = 0;
     ifp->if_lastchange = time;
 
-  //  if ()
-    struct sockaddr_in *sin = (struct sockaddr_in *)dst;
-    switch (sin->sin_family)
+    if (rt = rt0)
+    {
+        if ((rt->rt_flags & RTF_UP) == 0)
+        {
+            if (rt0 = rt = rtalloc1(dst, 1))
+                rt->rt_refcnt--;
+            else
+                senderr(EHOSTUNREACH);
+        }
+        if (rt->rt_flags & RTF_GATEWAY)
+        {
+            if (rt->rt_gwroute == 0)
+                goto lookup;
+            if ((rt = rt->rt_gwroute)->rt_flags & RTF_UP == 0)
+            {
+                rtfree(rt);
+                rt = rt0;
+lookup:
+                rt->rt_gwroute = rtalloc1(rt->rt_gateway, 1);
+                if ((rt = rt->rt_gwroute) == 0)
+                    senderr(EHOSTUNREACH);
+            }
+        }
+        if (rt->rt_flags & RTF_REJECT)
+            if (rt->rt_rmx.rmx_expire == 0
+                || time.tv_sec < rt->rt_rmx.rmx_expire)
+                senderr(rt == rt0 ? EHOSTDOWN : EHOSTUNREACH);
+    }
+
+    switch (dst->sa_family)
     {
     case AF_INET:
- //       if (!arpresolve())
+        if (!arpresolve(ac, rt, m, dst, edst))
             return 0;
+        if ((ifp->if_flags & IFF_SIMPLEX) && (m0->m_flags & IFF_BROADCAST))
+            mcopy = m_copy(m0, 0, len, M_WAITOK);
+
+        type = ETHERTYPE_IP;
+
         break;
     case AF_ISO:
         break;
     case AF_UNSPEC:
+        eh = (struct ether_header *)dst->sa_data;
+        memcpy(edst, eh->ether_dhost, sizeof (edst));
+
+        type = eh->ether_type;
+
         break;
     default:
+        senderr(EAFNOSUPPORT);
         break;
     }
 
-    return 0;
+    if (mcopy)
+        looutput(ifp, mcopy, dst, rt);
+
+    M_PREPEND(m, sizeof (struct ether_header), M_DONTWAIT);
+    if (m)
+        senderr(ENOBUFS); // should be an error code
+
+    eh = mtod(m, struct ether_header*);
+
+    eh->ether_type = HTONS(type);
+    memcpy(eh->ether_dhost, edst, sizeof (edst));
+    memcpy(eh->ether_shost, ac->ac_enaddr, sizeof (ac->ac_enaddr));
+
+    if (IF_QFULL(&ifp->if_snd, m))
+    {
+        IF_DROP(&ifp->if_snd);
+        senderr(ENOBUFS);
+    }
+    IF_ENQUEUE(&ifp->if_snd, m0);
+
+    if (ifp->if_flags & IFF_OACTIVE == 0)
+        (ifp->if_start)(ifp);
+
+    ifp->if_obytes = len + sizeof(struct ether_header);
+    if (m->m_flags & M_MCAST)
+        ifp->if_omcasts++;
+
+    bad:
+    if (m)
+        m_free(m);
+    return error;
 }
 
 /*

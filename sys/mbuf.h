@@ -174,22 +174,22 @@ struct mbuf
    /*(m) = m_retry((how), (type));    */\
 }
 
-#define MH_ALIGN(m, len)    \
+#define MH_ALIGN(m, length)    \
 {   \
-    (m)->m_data += MHLEN - (len);   \
-    (m)->m_len += (len);   \
-    (m)->m_pkthdr.len += (len);   \
+    (m)->m_data += MHLEN - (length);   \
+    (m)->m_len += (length);   \
+    (m)->m_pkthdr.len += (length);   \
 }
 
-#define M_PREPEND(m, len, how)   \
+#define M_PREPEND(m, length, how)   \
 {   \
-    if (MHLEN - (m)->m_len >= len)   \
+    if (MHLEN - (m)->m_len >= (length))   \
     {   \
-        (m)->m_data -= len;   \
-        (m)->m_len += len;   \
-        (m)->m_pkthdr.len += len;   \
+        (m)->m_data -= (length);   \
+        (m)->m_len += (length);   \
+        (m)->m_pkthdr.len += (length);   \
     }   \
-    else if (MHLEN - (m)->m_len < len)   \
+    else if (MHLEN - (m)->m_len < (length))   \
     {   \
         struct mbuf *n;   \
         MGETHDR(n, how, (m)->m_type);   \
@@ -197,7 +197,7 @@ struct mbuf
         n->m_flags = (m)->m_flags & ~M_EXT;   \
         n->m_nextpkt = (m)->m_nextpkt;   \
         n->m_pkthdr = (m)->m_pkthdr;   \
-        MH_ALIGN(n, len);   \
+        MH_ALIGN(n, (length));   \
         n->m_next = (m);   \
     }   \
 }
