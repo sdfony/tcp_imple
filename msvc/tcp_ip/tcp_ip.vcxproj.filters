@@ -61,6 +61,12 @@
     <Filter Include="Header Files\hp300\include">
       <UniqueIdentifier>{709627c7-b8d1-418f-837b-aee1d6d11a6c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\hp">
+      <UniqueIdentifier>{3e54a41a-ac4b-4872-9ddf-e7c6a0ff9d19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\hp\dev">
+      <UniqueIdentifier>{c5dcd666-248a-44a8-8151-56acca4e23b4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\net\bpf.h">
@@ -218,6 +224,12 @@
     </ClInclude>
     <ClInclude Include="..\..\hp300\include\proc.h">
       <Filter>Header Files\hp300\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\hp300\dev\if_lereg.h">
+      <Filter>Header Files\hp300\hp300</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\hp\iotypes.h">
+      <Filter>Header Files\hp\dev</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

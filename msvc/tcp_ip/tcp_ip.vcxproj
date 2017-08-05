@@ -131,9 +131,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\hp300\dev\device.h" />
+    <ClInclude Include="..\..\hp300\dev\if_lereg.h" />
     <ClInclude Include="..\..\hp300\hp300\isr.h" />
     <ClInclude Include="..\..\hp300\include\endian.h" />
     <ClInclude Include="..\..\hp300\include\proc.h" />
+    <ClInclude Include="..\..\hp\iotypes.h" />
     <ClInclude Include="..\..\netinet\if_ether.h" />
     <ClInclude Include="..\..\netinet\in.h" />
     <ClInclude Include="..\..\netinet\in_systm.h" />

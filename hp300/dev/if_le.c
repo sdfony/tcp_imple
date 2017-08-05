@@ -8,6 +8,7 @@
 #include "..\..\netinet\if_ether.h"
 #include "..\..\net\bpf.h"
 #include "..\include\endian.h"
+#include "if_lereg.h"
 
 #define NLE 32
 extern ifqmaxlen;
@@ -26,6 +27,8 @@ int	ledebug = 0;		/* console error messages */
 int	leintr(), leinit(), leioctl(), lestart(), ether_output(), lereset();
 struct	mbuf *m_devget();
 extern	struct ifnet loif;
+
+int leput(char *lebuf, struct mbuf *m);
 
 /*
  * Ethernet software status per interface.
@@ -136,10 +139,36 @@ void leread(int unit, char *buf, int len)
     ether_input((struct ifnet *)le, eh, m);
 }
 
-
 int lestart(struct ifnet *ifp)
 {
-	return 0;
+    struct mbuf *m = NULL;
+    struct le_softc *le = NULL;
+    char *buf = NULL;
+    int len = 0;
+
+    if (!ifp)
+        return 0;
+    if (ifp->if_flags & IFF_RUNNING == 0)
+        return 0;
+
+    le = &le_softc[ifp->if_unit];
+
+    do 
+    {
+        IF_DEQUEUE(&ifp->if_snd, m);
+        if (m == NULL)
+            return 0;
+
+        len = leput(le->sc_r2->ler2_tbuf[le->sc_tmd], m);
+
+        if (ifp->if_bpf)
+        {
+            bpf_tap(ifp->if_bpf, le->sc_r2->ler2_tbuf[le->sc_tmd], len);
+        }
+    } while (++le->sc_txcnt < LETBUF);
+
+    le->sc_if.if_flags |= IFF_OACTIVE;
+    return 0;
 }
 
 int leioctl(struct ifnet *ifp, int cmd, caddr_t data)
@@ -200,9 +229,7 @@ int lerint(unit)
  * Routine to copy from mbuf chain to transmit
  * buffer in board local memory.
  */
-int leput(lebuf, m)
-	register char *lebuf;
-	register struct mbuf *m;
+int leput(char *lebuf, struct mbuf *m)
 {
 	return 0; 
 }

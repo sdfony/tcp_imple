@@ -223,12 +223,13 @@ struct ifaddr
 
 #define IF_DEQUEUE(ifq, m)  \
 {   \
-	m = nulltpr;   \
-	if((ifq)->ifq_len == 0) \
-		return; \
-	m = (ifq)->ifq_head;    \
+	m = NULL;   \
+	if((ifq)->ifq_len > 0) \
+    { \
+    m = (ifq)->ifq_head;    \
 	(ifq)->ifq_head = (ifq)->ifq_head->m_nextpkt;   \
 	(ifq)->ifq_len--;   \
+    } \
 }
 
 #define	IFQ_MAXLEN	50
