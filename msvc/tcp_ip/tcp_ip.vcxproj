@@ -161,6 +161,8 @@
     <ClInclude Include="..\..\sys\dkstat.h" />
     <ClInclude Include="..\..\sys\domain.h" />
     <ClInclude Include="..\..\sys\errno.h" />
+    <ClInclude Include="..\..\sys\fcntl.h" />
+    <ClInclude Include="..\..\sys\file.h" />
     <ClInclude Include="..\..\sys\ioccom.h" />
     <ClInclude Include="..\..\sys\kernel.h" />
     <ClInclude Include="..\..\sys\malloc.h" />
@@ -173,6 +175,7 @@
     <ClInclude Include="..\..\sys\select.h" />
     <ClInclude Include="..\..\sys\signal.h" />
     <ClInclude Include="..\..\sys\socket.h" />
+    <ClInclude Include="..\..\sys\sockio.h" />
     <ClInclude Include="..\..\sys\syslog.h" />
     <ClInclude Include="..\..\sys\systm.h" />
     <ClInclude Include="..\..\sys\termios.h" />
@@ -183,6 +186,7 @@
     <ClInclude Include="..\..\sys\types.h" />
     <ClInclude Include="..\..\sys\ucred.h" />
     <ClInclude Include="..\..\sys\uio.h" />
+    <ClInclude Include="..\..\sys\unistd.h" />
     <ClInclude Include="..\..\test.h" />
   </ItemGroup>
   <ItemGroup>
