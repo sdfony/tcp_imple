@@ -17,6 +17,13 @@ struct ifaddr **ifnet_addrs;
 
 int ifconf(int cmd, caddr_t data)
 {
+    extern struct ifnet *ifnet;
+    struct ifconf *ifc = (struct ifconf *)data;
+    struct ifnet *ifp = ifnet;
+    struct ifaddr *ifa = NULL;
+    char *cp, *ep;
+    struct ifreq ifr, *ifrp;
+
 	return 0;
 }
 
