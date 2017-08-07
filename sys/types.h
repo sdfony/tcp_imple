@@ -1,7 +1,6 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-#define MYTEST_PUSH_DEFAULT
 typedef	unsigned long long u_quad_t;	/* quads */
 typedef	long long	quad_t;
 typedef	quad_t *	qaddr_t;
