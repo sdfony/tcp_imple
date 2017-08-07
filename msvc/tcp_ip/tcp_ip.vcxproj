@@ -175,6 +175,7 @@
     <ClInclude Include="..\..\sys\select.h" />
     <ClInclude Include="..\..\sys\signal.h" />
     <ClInclude Include="..\..\sys\socket.h" />
+    <ClInclude Include="..\..\sys\socketvar.h" />
     <ClInclude Include="..\..\sys\sockio.h" />
     <ClInclude Include="..\..\sys\syslog.h" />
     <ClInclude Include="..\..\sys\systm.h" />

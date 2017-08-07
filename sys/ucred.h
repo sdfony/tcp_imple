@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "param.h"
+#include "syslimits.h"
 
 //#define NGROUPS 16
 /*

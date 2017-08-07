@@ -2,6 +2,7 @@
 #define	_SYS_FCNTL_H_
 
 #include "types.h"
+#include "cdefs.h"
 /*
  * This file includes the definitions for open and fcntl
  * described by POSIX for <fcntl.h>; it also includes
