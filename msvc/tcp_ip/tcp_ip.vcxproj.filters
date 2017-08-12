@@ -231,6 +231,21 @@
     <ClInclude Include="..\..\hp\iotypes.h">
       <Filter>Header Files\hp\dev</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\sys\sockio.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\fcntl.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\file.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\unistd.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\socketvar.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\net\bpf.c">

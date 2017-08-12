@@ -17,7 +17,7 @@
  * strings produced by the __STRING macro, but this only works with ANSI C.
  */
 #if defined(__STDC__) || defined(__cplusplus)
-#define	protos)	protos		/* full-blown ANSI C */
+#define	(protos)	protos		/* full-blown ANSI C */
 #define	__CONCAT(x,y)	x ## y
 #define	__STRING(x)	#x
 

@@ -5,6 +5,10 @@
 #include "if_types.h"
 #include "if_dl.h"
 #include "..\sys\mbuf.h"
+#include "..\sys\socketvar.h"
+#include "..\sys\protosw.h"
+#include "..\sys\sockio.h"
+#include "route.h"
 
 // global variables
 int if_index = 0;
@@ -14,21 +18,148 @@ struct ifaddr **ifnet_addrs;
 
 int ifconf(int cmd, caddr_t data)
 {
+    extern struct ifnet *ifnet;
+
+    struct ifconf *ifc = (struct ifconf *)data;
+    struct ifnet *ifp = ifnet;
+    struct ifaddr *ifa = NULL;
+    char *cp, *ep;
+    struct ifreq ifr, *ifrp;
+    int space = ifc->ifc_len, error = 0;
+    ifrp = ifc->ifc_req;
+    ep = ifr.ifr_name + sizeof(ifr.ifr_name) - 2;
+
+    for (ifa = ifp->if_addrlist; space > sizeof(ifr) && ifp; ifp = ifp->if_next)
+    {
+        strncpy(ifr.ifr_name, ifp->if_name, IFNAMSIZ - 1);
+        ifr.ifr_name[strlen(ifr.ifr_name)] = ifp->if_unit + '0';
+
+        if (ifa == NULL)
+        {
+            memset(&ifr.ifr_addr, 0, sizeof(ifr.ifr_addr));
+            *ifrp = ifr;
+           
+            space -= sizeof(ifr);
+            ifrp++;
+        }
+        else
+        {  
+            for (; space > sizeof(ifr) && ifa; ifa = ifa->ifa_next)
+            {     
+                if (ifa->ifa_addr->sa_len <= sizeof(*ifa->ifa_addr))
+                {
+                    ifr.ifr_addr = *ifa->ifa_addr;
+                    *ifrp = ifr;
+
+                    space -= sizeof(ifr);
+                    ifrp++;
+                }
+                else
+                {
+                    memcpy(ifrp->ifr_name, ifr.ifr_name, IFNAMSIZ);
+                    space -= IFNAMSIZ;
+                 
+                    memcpy(&ifrp->ifr_addr, ifa->ifa_addr, ifa->ifa_addr->sa_len);
+                    space -= ifr.ifr_addr.sa_len;
+                
+                    ifrp = (struct ifreq*)((char*)ifrp + IFNAMSIZ + ifr.ifr_addr.sa_len);
+                }
+            }
+        }
+    }
+
 	return 0;
 }
 
 void if_down(struct ifnet *ifp)
 {
+    struct ifaddr *ifa = NULL;
+   
+    ifp->if_flags &= ~IFF_UP;
+    for (ifa = ifp->if_addrlist; ifa; ifa = ifa->ifa_next)
+    {
+        pfctlinput(PRC_IFDOWN, ifa);
+    }
+
+    if_qflush(&ifp->if_snd);
+    rt_ifmsg(ifp);
 }
 
 void if_up(struct ifnet *ifp)
 {
+    struct ifaddr *ifa = NULL;
+
+    ifp->if_flags |= IFF_UP;
+
+    rt_ifmsg(ifp);
+}
+
+/*
+ * Map interface name to
+ * interface structure pointer.
+ */
+struct ifnet *
+ifunit(name)
+	register char *name;
+{
+    char ifname[16] = "";
+    extern struct ifnet *ifnet;
+    struct ifnet *if_it = ifnet;
+
+    while (if_it)
+    {
+        strcpy(ifname, if_it->if_name);
+        sprintf(ifname+strlen(ifname), "%d", if_it->if_unit);
+
+        if (strcmp(name, ifname) == 0)
+            return if_it;
+
+        if_it = if_it->if_next;
+    }
+
+    return NULL;
 }
 
 
 int ifioctl(struct socket *so, int cmd,
 	caddr_t data, struct proc *p)
 {
+    struct ifreq *ifrp = NULL;
+    struct ifnet *ifp = NULL;
+
+    if (cmd == SIOCGIFCONF)
+        return ifconf(cmd, data);
+
+    ifrp = (struct ifreq *)data;
+    ifp = ifunit(ifrp->ifr_name);
+
+    switch (cmd)
+    {
+    case SIOCGIFFLAGS:
+        ifrp->ifr_flags = ifp->if_flags;
+        break;
+    case SIOCGIFMETRIC:
+        ifrp->ifr_metric = ifp->if_metric;
+        break;
+    case SIOCSIFFLAGS:
+        if (ifp->if_flags & IFF_UP && (ifrp->ifr_flags & IFF_UP == 0))
+            if_down(ifp);
+        if ((ifp->if_flags & IFF_UP == 0) && ifrp->ifr_flags & IFF_UP)
+            if_up(ifp);
+
+        ifp->if_flags = (ifp->if_flags & IFF_CANTCHANGE) | (ifrp->ifr_flags & ~IFF_CANTCHANGE);
+        if (ifp->if_ioctl)
+            ifp->if_ioctl(ifp, cmd, data);
+        break;
+    case SIOCSIFMETRIC:
+        ifp->if_metric = ifrp->ifr_metric;
+        break;
+    default:
+        if (so->so_proto == 0)
+            return EOPNOTSUPP;
+        return so->so_proto->pr_usrreq(so, PRU_CONTROL, cmd, data, ifp);
+    }
+
 	return 0;
 }
 
