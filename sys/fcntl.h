@@ -9,9 +9,9 @@
  * related kernel definitions.
  */
 
-#ifndef KERNEL
-#include <sys/types.h>
-#endif
+// #ifndef KERNEL
+// #include <sys/types.h>
+// #endif
 
 /*
  * File status flags: these are used by open(2), fcntl(2).
@@ -135,10 +135,6 @@ struct flock {
 #define	LOCK_UN		0x08		/* unlock file */
 #endif
 
-
-#ifndef KERNEL
-#include <sys/cdefs.h>
-
 __BEGIN_DECLS
 int	open __P((const char *, int, ...));
 int	creat __P((const char *, mode_t));
@@ -147,6 +143,5 @@ int	fcntl __P((int, int, ...));
 int	flock __P((int, int));
 #endif /* !_POSIX_SOURCE */
 __END_DECLS
-#endif
 
 #endif /* !_SYS_FCNTL_H_ */

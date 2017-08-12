@@ -9,6 +9,7 @@
 #include "..\..\net\bpf.h"
 #include "..\include\endian.h"
 #include "if_lereg.h"
+#include "..\..\sys\sockio.h"
 
 #define NLE 32
 extern ifqmaxlen;
@@ -173,6 +174,32 @@ int lestart(struct ifnet *ifp)
 
 int leioctl(struct ifnet *ifp, int cmd, caddr_t data)
 {
+    struct ifaddr *ifa = (struct ifaddr *)data;
+    struct le_softc *le = &le_softc[ifp->if_unit];
+    int error = 0;
+
+    switch (cmd)
+    {
+    case SIOCSIFFLAGS:
+        if ((ifa->ifa_flags & IFF_UP == 0)
+            && (ifp->if_flags & IFF_RUNNING))
+            ifp->if_flags &= ~IFF_RUNNING;
+        else if ((ifa->ifa_flags & IFF_UP)
+            && (ifp->if_flags & IFF_RUNNING == 0))
+            leinit(ifp->if_unit);
+
+        if (((ifp->if_flags ^ le->sc_iflags) & IFF_PROMISC)
+            && (ifp->if_flags & IFF_RUNNING))
+        {
+            le->sc_iflags = ifp->if_flags;
+            lereset(ifp->if_unit);
+            lestart(ifp);
+        }
+        break;
+    default:
+        error = EINVAL;
+        break;
+    }
 	return 0;
 }
 

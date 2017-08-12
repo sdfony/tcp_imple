@@ -8,7 +8,9 @@
 #include "route.h"
 #include "if_types.h"
 #include "../sys/time.h"
+#include "../sys/socket.h"
 #include "../hp300/include/endian.h"
+#include "../sys/mbuf.h"
 
 extern struct ifqueue pkintrq;
 
@@ -177,7 +179,6 @@ ether_input(ifp, eh, m)
     {
         IF_ENQUEUE(ifq, m);
     }
-
 }
 
 /*

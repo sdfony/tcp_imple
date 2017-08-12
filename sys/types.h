@@ -2,7 +2,16 @@
 #define TYPES_H
 
 typedef	unsigned long long u_quad_t;	/* quads */
+
+#ifdef  _WIN64
+typedef	long	quad_t;
+typedef unsigned short _ino_t;
+#else
 typedef	long long	quad_t;
+typedef	unsigned long	ino_t;		/* inode number */
+#endif
+
+
 typedef	quad_t *	qaddr_t;
 
 typedef char* caddr_t;
@@ -10,7 +19,6 @@ typedef	long		daddr_t;	/* disk address */
 typedef	unsigned long	dev_t;		/* device number */
 typedef unsigned long	fixpt_t;	/* fixed point number */
 typedef	unsigned long	gid_t;		/* group id */
-typedef	unsigned long	ino_t;		/* inode number */
 typedef	unsigned short	mode_t;		/* permissions */
 typedef	unsigned short	nlink_t;	/* link count */
 typedef	quad_t		off_t;		/* file offset */
@@ -49,11 +57,11 @@ struct	uio;
  *	#undef	_BSD_SIZE_T_
  *	#endif
  */
-#define	_BSD_CLOCK_T_	unsigned long		/* clock() */
+#define	_BSD_CLOCK_T_	long		/* clock() */
 #define	_BSD_PTRDIFF_T_	int			/* ptr1 - ptr2 */
-#define	_BSD_SIZE_T_	unsigned int		/* sizeof() */
+#define	_BSD_SIZE_T_	int		/* sizeof() */
 #define	_BSD_SSIZE_T_	int			/* byte count or error */
-#define	_BSD_TIME_T_	long			/* time() */
+#define	_BSD_TIME_T_	__int64			/* time() */
 #define	_BSD_VA_LIST_	char *			/* va_list */
 
 /*
@@ -87,10 +95,6 @@ typedef	_BSD_CLOCK_T_	clock_t;
 #undef	_BSD_CLOCK_T_
 #endif
 
-#ifdef	_BSD_SIZE_T_
-typedef	_BSD_SIZE_T_	size_t;
-#undef	_BSD_SIZE_T_
-#endif
 
 #ifdef	_BSD_SSIZE_T_
 typedef	_BSD_SSIZE_T_	ssize_t;
@@ -104,6 +108,7 @@ typedef	_BSD_TIME_T_	time_t;
 
 #ifndef _POSIX_SOURCE
 #define	NBBY	8		/* number of bits in a byte */
+#endif
 
 /*
  * Select uses bit masks of file descriptors in longs.  These macros

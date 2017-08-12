@@ -5,7 +5,7 @@
 #include "param.h"
 #include "syslimits.h"
 
-//#define NGROUPS 16
+#define NGROUPS 16
 /*
  * Credentials.
  */

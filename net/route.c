@@ -153,3 +153,7 @@ rtinit(ifa, cmd, flags)
 {
     return 0;
 }
+
+void rt_ifmsg(struct ifnet *ifp)
+{
+}
