@@ -133,6 +133,7 @@
     <ClInclude Include="..\..\hp300\dev\device.h" />
     <ClInclude Include="..\..\hp300\dev\if_lereg.h" />
     <ClInclude Include="..\..\hp300\hp300\isr.h" />
+    <ClInclude Include="..\..\hp300\include\ansi.h" />
     <ClInclude Include="..\..\hp300\include\endian.h" />
     <ClInclude Include="..\..\hp300\include\proc.h" />
     <ClInclude Include="..\..\hp\iotypes.h" />
@@ -163,7 +164,9 @@
     <ClInclude Include="..\..\sys\errno.h" />
     <ClInclude Include="..\..\sys\fcntl.h" />
     <ClInclude Include="..\..\sys\file.h" />
+    <ClInclude Include="..\..\sys\filio.h" />
     <ClInclude Include="..\..\sys\ioccom.h" />
+    <ClInclude Include="..\..\sys\ioctl.h" />
     <ClInclude Include="..\..\sys\kernel.h" />
     <ClInclude Include="..\..\sys\malloc.h" />
     <ClInclude Include="..\..\sys\mbuf.h" />
@@ -177,6 +180,7 @@
     <ClInclude Include="..\..\sys\socket.h" />
     <ClInclude Include="..\..\sys\socketvar.h" />
     <ClInclude Include="..\..\sys\sockio.h" />
+    <ClInclude Include="..\..\sys\stat.h" />
     <ClInclude Include="..\..\sys\syslog.h" />
     <ClInclude Include="..\..\sys\systm.h" />
     <ClInclude Include="..\..\sys\termios.h" />
@@ -194,6 +198,7 @@
     <ClCompile Include="..\..\hp300\dev\if_le.c" />
     <ClCompile Include="..\..\kern\init_main.c" />
     <ClCompile Include="..\..\kern\kern_clock.c" />
+    <ClCompile Include="..\..\kern\tty.c" />
     <ClCompile Include="..\..\kern\uipc_domain.c" />
     <ClCompile Include="..\..\kern\uipc_mbuf.c" />
     <ClCompile Include="..\..\kern\uipc_proto.c" />
@@ -209,6 +214,7 @@
     <ClCompile Include="..\..\net\radix.c" />
     <ClCompile Include="..\..\net\route.c" />
     <ClCompile Include="..\..\net\slcompress.c" />
+    <ClCompile Include="..\..\stand\ioctl.c" />
     <ClCompile Include="..\..\test.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

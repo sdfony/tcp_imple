@@ -1,9 +1,13 @@
 #include "if.h"
 #include "..\sys\mbuf.h"
+#include "..\sys\fcntl.h"
+#include "..\sys\tty.h"
 #include "..\net\bpf.h"
 #include "..\net\slip.h"
 #include "if_slvar.h"
 #include "if_types.h"
+#include "..\sys\errno.h"
+#include "..\sys\time.h"
 #include <stddef.h>
 
 #define NSL 32
@@ -13,7 +17,7 @@
  * cluster, and if we get a compressed packet, there's enough extra
  * room to expand the header into a max length tcp/ip header (128
  * bytes).  So, SLMAX can be at most
- *	MCLBYTES - 128
+ *	MCLBYTES - 1286
  *
  * SLMTU is a hard limit on output packet size.  To insure good
  * interactive response, SLMTU wants to be the smallest size that
@@ -114,21 +118,192 @@ void slattach()
 
 int slopen(dev_t dev, struct tty *tp)
 {
-    return 0;
+    if (tp->t_line == SLIPDISC)
+        return 0;
+
+    for (struct sl_softc *sl = sl_softc; sl < sl_softc + NSL; sl++)
+    {
+        if (sl->sc_ttyp == NULL)
+        {
+            slinit(sl);
+
+            tp->t_sc = sl;
+            sl->sc_ttyp = tp;
+            sl->sc_if.if_baudrate = tp->t_ospeed;
+
+            ttyflush(tp, FREAD|FWRITE);
+
+            return 0;
+        }
+    }
+
+    return ENXIO;
 }
 
 static int slinit(struct sl_softc *sc)
 {
+    if (sc->sc_ep == NULL)
+        sc->sc_ep = (caddr_t)malloc(MCLBYTES) + MCLBYTES;
+
+    sc->sc_buf = sc->sc_ep - SLMAX;
+    sc->sc_mp = sc->sc_buf;
+
+    sl_compress_init(&sc->sc_comp);
     return 1;
 }
 
 static struct mbuf *sl_btom(struct sl_softc *sc, int len)
 {
-	return NULL;
+    struct mbuf *m;
+
+    MGETHDR(m, M_WAITOK, 0);
+    m->m_len = len;
+    if (len < MCLBYTES)
+    {
+        m->m_pkthdr.len = m->m_len;
+        memcpy(mtod(m, caddr_t), sc->sc_buf, len);
+    }
+    else
+    {
+        char *p = malloc(MCLBYTES * sizeof (char));
+        m->m_flags |= M_EXT;
+		m->m_data = m->m_ext.ext_buf = p + MCLBYTES;
+    }
+
+	return m;
 }
 
 void slinput(int c, struct tty *tp)
 {
+    extern long tk_nin;
+    extern struct timeval time;
+    extern struct ifqueue ipintrq;
+
+    struct sl_softc *sc = tp->t_sc;
+    struct ifnet *ifp = NULL;
+    struct mbuf *m = NULL;
+    struct ifqueue *ifq = NULL;
+    int len, s;
+    u_char chdr[CHDR_LEN];
+
+    tk_nin++;
+
+    if (sc == NULL)
+        return;
+    if (c & TTY_ERRORMASK
+        || ((tp->t_state & TS_CARR_ON)==0
+            && (tp->t_cflag & CLOCAL)==0))
+    {
+        sc->sc_flags |= SC_ERROR;
+        return ;
+    }
+
+    ifp = &sc->sc_if;
+    c &= TTY_CHARMASK;
+
+    switch (c)
+    {
+	case TRANS_FRAME_ESCAPE:
+		if (sc->sc_escape)
+			c = FRAME_ESCAPE;
+		break;
+
+	case TRANS_FRAME_END:
+		if (sc->sc_escape)
+			c = FRAME_END;
+		break;
+
+	case FRAME_ESCAPE:
+		sc->sc_escape = 1;
+		return;
+
+	case FRAME_END:
+		if(sc->sc_flags & SC_ERROR) 
+        {
+			sc->sc_flags &= ~SC_ERROR;
+			goto newpack;
+		}
+        len = sc->sc_mp - sc->sc_buf;
+        if (len < 3)
+            goto newpack;
+
+        if (sc->sc_bpf)
+        {
+            memcpy(chdr, sc->sc_buf, CHDR_LEN);
+        }
+
+        if ((c = (*sc->sc_buf & 0xf0)) != (IPVERSION << 4))
+        {
+            if (c & 0x80)
+                c = TYPE_COMPRESSED_TCP;
+            else if (c == TYPE_UNCOMPRESSED_TCP)
+                *sc->sc_buf &= 0x4f;
+
+            if (sc->sc_if.if_flags & SC_COMPRESS)
+            {
+                len = sl_uncompress_tcp(&sc->sc_buf, len, 
+                        (u_int)c, &sc->sc_comp);
+                if (len <= 0)
+                    goto error;
+            }
+            else if ((sc->sc_if.if_flags & SC_AUTOCOMP)
+                    && c == TYPE_UNCOMPRESSED_TCP && len >= 40)
+            {
+                len = sl_uncompress_tcp(&sc->sc_buf, len,
+                                    (u_int)c, &sc->sc_comp);
+                if (len <= 0)
+                    goto error;
+                sc->sc_if.if_flags |= SC_COMPRESS;
+            }
+            else
+                goto error;
+        }
+
+        if (sc->sc_bpf)
+        {
+            u_char *hp = sc->sc_buf - SLIP_HDRLEN;
+
+            hp[SLX_DIR] = SLIPDIR_IN;
+            memcpy(&hp[SLX_CHDR], chdr, CHDR_LEN);
+            bpf_tap(sc->sc_bpf, hp, len+SLIP_HDRLEN);
+        }
+        m = sl_btom(sc, len);
+        if (m == NULL)
+            goto error;
+
+        ifp->if_ipackets++;
+        ifp->if_lastchange = time;
+
+        ifq = &ipintrq;
+        if (IF_QFULL(ifq))
+        {
+            IF_DROP(ifq);
+            ifp->if_ierrors++;
+            ifp->if_iqdrops++;
+            m_freem(m);
+        }
+        else
+        {
+            IF_ENQUEUE(ifq, m);
+        }
+    }
+
+    if (sc->sc_mp < sc->sc_ep)
+    {
+        *sc->sc_mp++ = c;
+        sc->sc_escape = 0;
+        return ;
+    }
+
+    // can't put lower, would miss an extra frame
+    sc->sc_flags |= SC_ERROR;
+
+error:
+    sc->sc_flags |= SC_ERROR;
+
+newpack:
+    sc->sc_mp = sc->sc_buf = sc->sc_ep - SLMAX;
+    sc->sc_escape = 0;
 }
 
 int sloutput(struct ifnet *ifp,

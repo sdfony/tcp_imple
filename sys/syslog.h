@@ -1,37 +1,8 @@
-/*
- * Copyright (c) 1982, 1986, 1988, 1993
- *	The Regents of the University of California.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
- * 4. Neither the name of the University nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- *	@(#)syslog.h	8.1 (Berkeley) 6/2/93
- */
+#ifndef SYS_SYSLOG_H
+#define SYS_SYSLOG_H
+
+#include "../hp300/include/ansi.h"
+#include "cdefs.h"
 
 #define	_PATH_LOG	"/dev/log"
 
@@ -164,7 +135,7 @@ CODE facilitynames[] = {
 #define	LOG_NOWAIT	0x10	/* don't wait for console forks: DEPRECATED */
 #define	LOG_PERROR	0x20	/* log to stderr as well */
 
-#ifndef KERNEL
+//#ifndef KERNEL
 
 /*
  * Don't use va_list in the vsyslog() prototype.   Va_list is typedef'd in two
@@ -173,8 +144,6 @@ CODE facilitynames[] = {
  * for utilities to have to include one of them to include syslog.h, so we get
  * _BSD_VA_LIST_ from <machine/ansi.h> and use it.
  */
-#include <machine/ansi.h>
-#include <sys/cdefs.h>
 
 __BEGIN_DECLS
 void	closelog __P((void));
@@ -184,4 +153,7 @@ void	syslog __P((int, const char *, ...));
 void	vsyslog __P((int, const char *, _BSD_VA_LIST_));
 __END_DECLS
 
-#endif /* !KERNEL */
+//#endif [> !KERNEL <]
+
+
+#endif  // SYS_SYSLOG_H
