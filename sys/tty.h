@@ -71,10 +71,10 @@ struct tty {
 #define	TTYHOG	1024
 
 // #ifdef KERNEL
-// #define	TTMAXHIWAT	roundup(2048, CBSIZE)
-// #define	TTMINHIWAT	roundup(100, CBSIZE)
-// #define	TTMAXLOWAT	256
-// #define	TTMINLOWAT	32
+#define	TTMAXHIWAT	roundup(2048, CBSIZE)
+#define	TTMINHIWAT	roundup(100, CBSIZE)
+#define	TTMAXLOWAT	256
+#define	TTMINLOWAT	32
 // #endif
 
 /* These flags are kept in t_state. */
@@ -134,50 +134,50 @@ struct speedtab {
 	(isctty((p), (tp)) && (p)->p_pgrp != (tp)->t_pgrp)
 
 // #ifdef KERNEL
-// extern	struct ttychars ttydefaults;
-// 
-// /* Symbolic sleep message strings. */
-// extern	 char ttyin[], ttyout[], ttopen[], ttclos[], ttybg[], ttybuf[];
-// 
-// int	 b_to_q(char *cp, int cc, struct clist *q);
-// void	 catq(struct clist *from, struct clist *to);
-// void	 clist_init(void);
-// int	 getc(struct clist *q);
-// void	 ndflush(struct clist *q, int cc);
-// int	 ndqb(struct clist *q, int flag);
-// char	*nextc(struct clist *q, char *cp, int *c);
-// int	 putc(int c, struct clist *q);
-// int	 q_to_b(struct clist *q, char *cp, int cc);
-// int	 unputc(struct clist *q);
-// 
-// int	 nullmodem(struct tty *tp, int flag);
-// int	 tputchar(int c, struct tty *tp);
-// int	 ttioctl(struct tty *tp, int com, void *data, int flag);
-// int	 ttread(struct tty *tp, struct uio *uio, int flag);
-// void	 ttrstrt(void *tp);
-// int	 ttselect(dev_t device, int rw, struct proc *p);
-// void	 ttsetwater(struct tty *tp);
-// int	 ttspeedtab(int speed, struct speedtab *table);
-// int	 ttstart(struct tty *tp);
-// void	 ttwakeup(struct tty *tp);
-// int	 ttwrite(struct tty *tp, struct uio *uio, int flag);
-// void	 ttychars(struct tty *tp);
-// int	 ttycheckoutq(struct tty *tp, int wait);
-// int	 ttyclose(struct tty *tp);
-// void	 ttyflush(struct tty *tp, int rw);
-// void	 ttyinfo(struct tty *tp);
-// int	 ttyinput(int c, struct tty *tp);
-// int	 ttylclose(struct tty *tp, int flag);
-// int	 ttymodem(struct tty *tp, int flag);
-// int	 ttyopen(dev_t device, struct tty *tp);
-// int	 ttyoutput(int c, struct tty *tp);
-// void	 ttypend(struct tty *tp);
-// void	 ttyretype(struct tty *tp);
-// void	 ttyrub(int c, struct tty *tp);
-// int	 ttysleep(struct tty *tp,
-// 	    void *chan, int pri, char *wmesg, int timeout);
-// int	 ttywait(struct tty *tp);
-// int	 ttywflush(struct tty *tp);
+extern	struct ttychars ttydefaults;
+
+/* Symbolic sleep message strings. */
+extern	 char ttyin[], ttyout[], ttopen[], ttclos[], ttybg[], ttybuf[];
+
+int	 b_to_q(char *cp, int cc, struct clist *q);
+void	 catq(struct clist *from, struct clist *to);
+void	 clist_init(void);
+int	 getc(struct clist *q);
+void	 ndflush(struct clist *q, int cc);
+int	 ndqb(struct clist *q, int flag);
+char	*nextc(struct clist *q, char *cp, int *c);
+int	 putc(int c, struct clist *q);
+int	 q_to_b(struct clist *q, char *cp, int cc);
+int	 unputc(struct clist *q);
+
+int	 nullmodem(struct tty *tp, int flag);
+int	 tputchar(int c, struct tty *tp);
+int	 ttioctl(struct tty *tp, int com, void *data, int flag);
+int	 ttread(struct tty *tp, struct uio *uio, int flag);
+void	 ttrstrt(void *tp);
+int	 ttselect(dev_t device, int rw, struct proc *p);
+void	 ttsetwater(struct tty *tp);
+int	 ttspeedtab(int speed, struct speedtab *table);
+int	 ttstart(struct tty *tp);
+void	 ttwakeup(struct tty *tp);
+int	 ttwrite(struct tty *tp, struct uio *uio, int flag);
+void	 ttychars(struct tty *tp);
+int	 ttycheckoutq(struct tty *tp, int wait);
+int	 ttyclose(struct tty *tp);
+void	 ttyflush(struct tty *tp, int rw);
+void	 ttyinfo(struct tty *tp);
+int	 ttyinput(int c, struct tty *tp);
+int	 ttylclose(struct tty *tp, int flag);
+int	 ttymodem(struct tty *tp, int flag);
+int	 ttyopen(dev_t device, struct tty *tp);
+int	 ttyoutput(int c, struct tty *tp);
+void	 ttypend(struct tty *tp);
+void	 ttyretype(struct tty *tp);
+void	 ttyrub(int c, struct tty *tp);
+int	 ttysleep(struct tty *tp,
+	    void *chan, int pri, char *wmesg, int timeout);
+int	 ttywait(struct tty *tp);
+int	 ttywflush(struct tty *tp);
 
 #endif  // SYS_TTY_H
 

@@ -120,7 +120,6 @@ ifunit(name)
     return NULL;
 }
 
-
 int ifioctl(struct socket *so, int cmd,
 	caddr_t data, struct proc *p)
 {
@@ -131,7 +130,7 @@ int ifioctl(struct socket *so, int cmd,
         return ifconf(cmd, data);
 
     ifrp = (struct ifreq *)data;
-    ifp = ifunit(ifrp->ifr_name);
+    ifp = ifunit(ifrp->ifr_name); 
 
     switch (cmd)
     {

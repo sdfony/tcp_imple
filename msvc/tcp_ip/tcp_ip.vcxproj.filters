@@ -67,6 +67,12 @@
     <Filter Include="Header Files\hp\dev">
       <UniqueIdentifier>{c5dcd666-248a-44a8-8151-56acca4e23b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\stand">
+      <UniqueIdentifier>{dda6f549-e419-4dba-bd86-f5d3fd560e2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\stand">
+      <UniqueIdentifier>{f4eb0053-8aaf-4622-97e3-0008f4a3ea36}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\net\bpf.h">
@@ -246,6 +252,18 @@
     <ClInclude Include="..\..\sys\socketvar.h">
       <Filter>Header Files\sys</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\sys\ioctl.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\filio.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\hp300\include\ansi.h">
+      <Filter>Header Files\hp300\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sys\stat.h">
+      <Filter>Header Files\sys</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\net\bpf.c">
@@ -304,6 +322,12 @@
     </ClCompile>
     <ClCompile Include="..\..\kern\kern_clock.c">
       <Filter>Source Files\kern</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\kern\tty.c">
+      <Filter>Source Files\kern</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\stand\ioctl.c">
+      <Filter>Source Files\stand</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
