@@ -519,7 +519,16 @@ void slclose(struct tty *tp)
 
 int sltioctl(struct tty *tp, int cmd, caddr_t data, int flag)
 {
-	return 0;
+    struct sl_softc *sc = tp->t_sc;
+    switch (cmd)
+    {
+    case SLIOCGUNIT:
+        *(int*)data = sc->sc_if.if_unit;
+        break;
+    default:
+        return -1;
+    }
+    return 0;
 }
 
 int slioctl(struct ifnet *ifnet, int cmd, caddr_t data)
