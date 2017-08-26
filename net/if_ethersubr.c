@@ -152,11 +152,24 @@ ether_input(ifp, eh, m)
     struct timeval time;
     struct ifqueue *ifq = NULL;
     extern struct ifqueue ipintrq;
+    struct arpcom *ac = (struct arpcom*)ifp;
+
+    if (ifp->if_flags & IFF_UP == 0)
+    {
+        m_freem(m);
+        return ;
+    }
 
     time.tv_sec = time.tv_usec = 0;
     ifp->if_ibytes += m->m_pkthdr.len + 14;
 
     ifp->if_lastchange = time;
+
+    if (memcpy(eh->ether_dhost, etherbroadcastaddr, sizeof(etherbroadcastaddr)) == 0)
+        m->m_flags |= M_BCAST;
+    if (eh->ether_dhost[0] & 0x1)
+        m->m_flags |= M_MCAST;
+
     if (eh->ether_type == AF_INET)
     {
         ifq = &ipintrq;
@@ -167,13 +180,15 @@ ether_input(ifp, eh, m)
     }
     else
     {
-        if (eh->ether_type < 65535)
+        if (eh->ether_type > ETHERMTU)  // not process the ether_type or 802.3
+        /*if (eh->ether_type < 65535)*/
             return ;
     }
 
     if (IF_QFULL(ifq))
     {
         IF_DROP(ifq);
+        m_freem(m);
     }
     else
     {
