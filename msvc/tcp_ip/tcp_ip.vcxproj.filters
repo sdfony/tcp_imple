@@ -270,6 +270,12 @@
     <ClInclude Include="..\..\hp300\include\psl.h">
       <Filter>Header Files\hp300\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\hp300\include\cpu.h">
+      <Filter>Header Files\hp300\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\netisr.h">
+      <Filter>Header Files\net</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\net\bpf.c">
