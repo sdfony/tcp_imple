@@ -2,6 +2,7 @@
 #include "..\sys\mbuf.h"
 #include "..\sys\fcntl.h"
 #include "..\sys\tty.h"
+#include "..\sys\param.h"
 #include "..\net\bpf.h"
 #include "..\net\slip.h"
 #include "if_slvar.h"
@@ -311,12 +312,190 @@ int sloutput(struct ifnet *ifp,
         struct sockaddr *dst,
         struct rtentry *rtp)
 {
+    extern struct timeval time;
+    struct ip *ip = mtod(m, struct ip*);
+    struct ifqueue *ifq = NULL;
+    struct sl_softc *sc = &sl_softc[ifp->if_unit];
+
+    if (dst->sa_family != AF_INET)
+    {
+        m_freem(m);
+        sc->sc_if.if_noproto++;
+
+        return EAFNOSUPPORT;
+    }
+
+    if (sc->sc_ttyp == NULL)
+    {
+        m_freem(m);
+        return ENETDOWN;
+    }
+    if ((sc->sc_ttyp->t_state & TS_CARR_ON) == 0
+        && (sc->sc_ttyp->t_flags & CLOCAL) == 0)
+    {
+        m_freem(m);
+        return EHOSTUNREACH;
+    }
+
+    ifq = &ifp->if_snd;
+
+    if (sc->sc_if.if_flags & SC_NOICMP && ip->ip_p == IPPROTO_ICMP)
+    {
+        m_freem(m);
+        return ENETRESET;
+    }
+
+    if (ip->ip_tos & IPTOS_LOWDELAY)
+        ifq = &sc->sc_fastq;
+
+    if (IF_QFULL(ifq))
+    {
+        IF_DROP(ifq);
+        ifp->if_oerrors++;
+        m_freem(m);
+
+        return ENOBUFS;
+    }
+    IF_ENQUEUE(ifq, m);
+
+    sc->sc_if.if_lastchange = time;
+
+    if (sc->sc_ttyp->t_outq.c_cc == 0)
+        slstart(sc->sc_ttyp);
+
     return 0;
 }
 
 void slstart(struct tty *tp)
 {
+    extern int cfreecount;
+    extern struct timeval time;
 
+    struct sl_softc* sc = tp->t_sc;
+    struct mbuf *m2, *m = NULL;
+    struct ip *ip;
+    int len = 0;
+    u_char bpfbuf[SLMTU + SLIP_HDRLEN];
+
+
+    for (; ;)
+    {
+        if (tp->t_outq.c_cc != 0)
+            (tp->t_oproc)(tp);
+        if (tp->t_outq.c_cc > SLIP_HIWAT)
+        {
+            return;
+        }
+
+        // when line shutdown
+        if (sc == NULL)
+            return;
+
+        IF_DEQUEUE(&sc->sc_fastq, m);
+        if (m)
+            sc->sc_if.if_omcasts++;
+        else
+            IF_DEQUEUE(&sc->sc_if.if_snd, m);
+        if (m == NULL)
+            return;
+
+        if (sc->sc_bpf)
+        {
+            u_char *cp = bpfbuf + SLIP_HDRLEN;
+            struct mbuf *m1 = m;
+            len = 0;
+
+            while (m1)
+            {
+                memcpy(cp, mtod(m1, caddr_t), m1->m_len);
+
+                cp += m1->m_len;
+                m1 = m1->m_next;
+            }
+        }
+
+        if ((ip = mtod(m, struct ip*))->ip_p == IPPROTO_TCP)
+        {
+            if (sc->sc_if.if_flags & SC_COMPRESS)
+                *mtod(m, caddr_t) |= sl_compress_tcp(m, ip, &sc->sc_comp, 1);
+        }
+
+        if (sc->sc_bpf)
+        {
+            bpfbuf[SLX_DIR] = SLIPDIR_OUT;
+            memcpy(&bpfbuf[SLX_CHDR], mtod(m, caddr_t), CHDR_LEN);
+            bpf_tap(sc->sc_bpf, bpfbuf, len + SLIP_HDRLEN);
+        }
+
+        sc->sc_if.if_lastchange = time;
+
+        if (cfreecount < CLISTRESERVE + SLMTU)
+        {
+            m_freem(m);
+            sc->sc_if.if_collisions++;
+            continue;
+        }
+
+
+        if (tp->t_outq.c_cc == 0)
+        {
+            sc->sc_if.if_obytes++;
+            putc(FRAME_END, &tp->t_outq);
+        }
+
+        while (m)
+        {
+            u_char *cp = mtod(m, u_char *);
+            u_char *ep = cp + m->m_len;
+
+            while (cp < ep)
+            {
+                u_char *bp = cp;
+
+                while (cp < ep)
+                {
+                    switch (*cp++)
+                    {
+                        case FRAME_END:
+                        case FRAME_ESCAPE:
+                            break;
+                    }
+
+                }
+                if (cp > bp)
+                {
+                    b_to_q(bp, cp-bp-1, &tp->t_outq);
+                    sc->sc_if.if_obytes += cp - bp;
+                }
+                if (cp < ep)
+                {
+                    putc(FRAME_ESCAPE, &tp->t_outq);
+                    if (*(cp) == FRAME_END)
+                        putc(TRANS_FRAME_END, &tp->t_outq);
+                    else if (*(cp) == FRAME_ESCAPE)
+                        putc(TRANS_FRAME_ESCAPE, &tp->t_outq);
+
+                    sc->sc_if.if_obytes += 2;
+                }
+            }
+
+            MFREE(m, m2);
+            m = m2;
+        }
+
+        if (putc(FRAME_END, &tp->t_outq))
+        {
+            // not enough room, remove a char to make room and end the packet normally
+            unputc(&tp->t_outq);
+            putc(FRAME_END, &tp->t_outq);
+            sc->sc_if.if_collisions++;
+        }
+        else
+        {
+            sc->sc_if.if_obytes++;
+            sc->sc_if.if_obytes++;
+        }
+    }
 }
 
 void slclose(struct tty *tp)

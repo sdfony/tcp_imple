@@ -329,5 +329,8 @@
     <ClCompile Include="..\..\stand\ioctl.c">
       <Filter>Source Files\stand</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\kern\tty_subr.c">
+      <Filter>Source Files\kern</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

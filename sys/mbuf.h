@@ -146,7 +146,7 @@ struct mbuf
     {   \
         if (ref == 0)   \
         {   \
-            free((m)->m_ext.ext.buf);   \
+            free((m)->m_ext.ext_buf);   \
         }   \
         free((m));  \
         /*FREE((m)->m_ext.ext.buf);   */\
