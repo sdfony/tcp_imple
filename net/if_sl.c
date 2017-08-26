@@ -500,6 +500,21 @@ void slstart(struct tty *tp)
 
 void slclose(struct tty *tp)
 {
+    struct sl_softc *sc = tp->t_sc;
+    
+    ttywflush(tp);
+    tp->t_line = 0;
+
+    if (sc)
+    {
+        if_down(&sc->sc_if);
+
+        sc->sc_ttyp = NULL;
+        tp->t_sc = NULL;
+
+        MCLFREE(sc->sc_ep - SLBUFSIZE);
+        sc->sc_buf = sc->sc_mp = sc->sc_ep = NULL;
+    }
 }
 
 int sltioctl(struct tty *tp, int cmd, caddr_t data, int flag)

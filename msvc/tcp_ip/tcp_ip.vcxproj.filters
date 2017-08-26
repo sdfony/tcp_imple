@@ -264,6 +264,12 @@
     <ClInclude Include="..\..\sys\stat.h">
       <Filter>Header Files\sys</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\hp300\include\param.h">
+      <Filter>Header Files\hp300\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\hp300\include\psl.h">
+      <Filter>Header Files\hp300\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\net\bpf.c">

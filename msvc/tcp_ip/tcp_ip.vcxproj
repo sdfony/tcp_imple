@@ -135,7 +135,9 @@
     <ClInclude Include="..\..\hp300\hp300\isr.h" />
     <ClInclude Include="..\..\hp300\include\ansi.h" />
     <ClInclude Include="..\..\hp300\include\endian.h" />
+    <ClInclude Include="..\..\hp300\include\param.h" />
     <ClInclude Include="..\..\hp300\include\proc.h" />
+    <ClInclude Include="..\..\hp300\include\psl.h" />
     <ClInclude Include="..\..\hp\iotypes.h" />
     <ClInclude Include="..\..\netinet\if_ether.h" />
     <ClInclude Include="..\..\netinet\in.h" />
