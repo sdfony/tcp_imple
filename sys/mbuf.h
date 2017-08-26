@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "malloc.h"
+#include "../hp300/include/param.h"
 #include <stdlib.h>
 
 #define	MSIZE		128		/* size of an mbuf */
@@ -21,6 +22,23 @@
 #define M_BCAST     0x0100 /* send/received as link-level broadcast */
 #define M_MCAST     0x0200 /* send/received as link-level multicast */
 #define M_COPYFLAGS (M_PKTHDR|M_EOR|M_BCAST|M_MCAST)    /* flags copied when copying m_pkthdr */
+
+/*
+* Mbuf cluster macros.
+* MCLALLOC(caddr_t p, int how) allocates an mbuf cluster.
+* MCLGET adds such clusters to a normal mbuf;
+* the flag M_EXT is set upon success.
+* MCLFREE releases a reference to a cluster allocated by MCLALLOC,
+* freeing the cluster if the reference count has reached 0.
+*
+* Normal mbuf clusters are normally treated as character arrays
+* after allocation, but use the first word of the buffer as a free list
+* pointer while on the free list.
+*/
+union mcluster {
+    union	mcluster *mcl_next;
+    char	mcl_buf[MCLBYTES];
+};
 
 struct mbuf;
 /* header at beginning of each mbuf: */
@@ -124,6 +142,28 @@ struct mbuf
         (m) = m_retry((how), (type));    \
 }
 
+#define MCLALLOC(p, how) \
+{   \
+    if (mclfree == NULL)    \
+        m_clalloc(1, (how));    \
+    if ((p) = (caddr_t)mclfree) \
+    {   \
+        ++mclrefcnt[mtocl(p)];  \
+        mbstat.m_clfree--;  \
+        mclfree = ((union mcluster *)(p))->mcl_next;    \
+    }   \
+}
+
+#define MCLFREE(p)  \
+{   \
+    if (--mclrefcnt[mtocl(p)] == 0) \
+    {   \
+        ((union mcluster *)(p))->mcl_next = mclfree;    \
+        mclfree = (union mcluster *)(p);    \
+        mbstat.m_clfree++;  \
+    }   \
+}
+
 #define MCLGET(m, how) \
 {   \
     (m)->m_ext.ext_buf = (caddr_t)malloc(MCLBYTES * sizeof(char));  \
@@ -146,7 +186,7 @@ struct mbuf
     {   \
         if (ref == 0)   \
         {   \
-            free((m)->m_ext.ext.buf);   \
+            free((m)->m_ext.ext_buf);   \
         }   \
         free((m));  \
         /*FREE((m)->m_ext.ext.buf);   */\
@@ -201,6 +241,8 @@ struct mbuf
         n->m_next = (m);   \
     }   \
 }
+
+
 
 void m_adj(struct mbuf *m, int len);
 void m_cat(struct mbuf *m, struct mbuf *n);
@@ -258,9 +300,5 @@ int	max_protohdr;			/* largest protocol header */
 int	max_hdr;			/* largest link+protocol header */
 int	max_datalen;			/* MHLEN - max_hdr */
 extern	int mbtypes[];			/* XXX */
-
-
-
-
 
 #endif  // M_BUF_H

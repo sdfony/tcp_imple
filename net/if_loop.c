@@ -1,5 +1,9 @@
 #include "if.h"
 #include "if_types.h"
+#include "..\sys\errno.h"
+#include "..\sys\mbuf.h"
+#include "route.h"
+#include "netisr.h"
 #include <stddef.h>
 
 #define LOMTU 1536
@@ -33,8 +37,69 @@ int loioctl(struct ifnet *ifp, int cmd, caddr_t data)
 int looutput(struct ifnet *ifp,
 	struct mbuf *m,
 	struct sockaddr *dst,
-	struct rtentry *rtp)
+	struct rtentry *rt)
 {
+    extern struct timeval time;
+    extern struct ifqueue ipintrq;
+
+    int s, isr;
+    struct ifqueue *ifq = NULL;
+
+    if ((m->m_flags & M_PKTHDR) == 0)
+        perror("looutput no HDR");
+        //panic("looutput no HDR");
+
+    ifp->if_lastchange = time;
+    if (loif.if_bpf)
+    {
+        struct mbuf m0;
+        u_int af = dst->sa_family;
+
+        m0.m_next = m;
+        m0.m_len = 4;
+        m0.m_data = (char*)&af;
+
+        bpf_mtap(loif.if_bpf, &m0);
+    }
+    m->m_pkthdr.rcvif = ifp;
+
+    if (rt && rt->rt_flags & (RTF_REJECT | RTF_BLACKHOLE))
+    {
+        m_freem(m);
+        return (rt->rt_flags & RTF_BLACKHOLE ? 0 : 
+                rt->rt_flags & RTF_HOST ? EHOSTUNREACH : ENETUNREACH);
+    }
+    ifp->if_opackets++;
+    ifp->if_obytes += m->m_pkthdr.len;
+    switch (dst->sa_family)
+    {
+    case AF_INET:
+        ifq = &ipintrq;
+        isr = NETISR_IP;
+        break;
+    //case AF_ISO:
+    //    ifq = &clnlintrq;
+    //    isr = NETISR_ISO;
+    //    break;
+
+    default:
+        printf("lo%d: can't handle af%d\n", ifp->if_unit, dst->sa_family);
+        m_freem(m);
+        return EAFNOSUPPORT;
+    }
+
+    if (IF_QFULL(ifq))
+    {
+        IF_DROP(ifq);
+        m_freem(m);
+
+        return (ENOBUFS);
+    }
+    IF_ENQUEUE(ifq, m);
+
+    ifp->if_ipackets++;
+    ifp->if_ibytes += m->m_pkthdr.len;
+
 	return 0;
 }
 

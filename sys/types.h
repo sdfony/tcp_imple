@@ -5,10 +5,12 @@ typedef	unsigned long long u_quad_t;	/* quads */
 
 #ifdef  _WIN64
 typedef	long	quad_t;
-typedef unsigned short _ino_t;
+typedef unsigned short ino_t;
+typedef	unsigned long	uid_t;		/* user id */
 #else
 typedef	long long	quad_t;
 typedef	unsigned long	ino_t;		/* inode number */
+typedef	unsigned long	uid_t;		/* user id */
 #endif
 
 
@@ -25,7 +27,6 @@ typedef	quad_t		off_t;		/* file offset */
 typedef	long		pid_t;		/* process id */
 typedef	long		segsz_t;	/* segment size */
 typedef	long		swblk_t;	/* swap offset */
-typedef	unsigned long	uid_t;		/* user id */
 
 typedef unsigned char u_char;
 typedef unsigned short u_short;
