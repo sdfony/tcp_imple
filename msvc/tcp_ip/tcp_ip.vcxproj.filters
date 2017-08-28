@@ -264,6 +264,18 @@
     <ClInclude Include="..\..\sys\stat.h">
       <Filter>Header Files\sys</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\hp300\include\param.h">
+      <Filter>Header Files\hp300\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\hp300\include\psl.h">
+      <Filter>Header Files\hp300\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\hp300\include\cpu.h">
+      <Filter>Header Files\hp300\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\netisr.h">
+      <Filter>Header Files\net</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\net\bpf.c">
@@ -328,6 +340,9 @@
     </ClCompile>
     <ClCompile Include="..\..\stand\ioctl.c">
       <Filter>Source Files\stand</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\kern\tty_subr.c">
+      <Filter>Source Files\kern</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -134,8 +134,11 @@
     <ClInclude Include="..\..\hp300\dev\if_lereg.h" />
     <ClInclude Include="..\..\hp300\hp300\isr.h" />
     <ClInclude Include="..\..\hp300\include\ansi.h" />
+    <ClInclude Include="..\..\hp300\include\cpu.h" />
     <ClInclude Include="..\..\hp300\include\endian.h" />
+    <ClInclude Include="..\..\hp300\include\param.h" />
     <ClInclude Include="..\..\hp300\include\proc.h" />
+    <ClInclude Include="..\..\hp300\include\psl.h" />
     <ClInclude Include="..\..\hp\iotypes.h" />
     <ClInclude Include="..\..\netinet\if_ether.h" />
     <ClInclude Include="..\..\netinet\in.h" />
@@ -152,6 +155,7 @@
     <ClInclude Include="..\..\net\if_dl.h" />
     <ClInclude Include="..\..\net\if_slvar.h" />
     <ClInclude Include="..\..\net\if_types.h" />
+    <ClInclude Include="..\..\net\netisr.h" />
     <ClInclude Include="..\..\net\radix.h" />
     <ClInclude Include="..\..\net\route.h" />
     <ClInclude Include="..\..\net\slcompress.h" />
@@ -199,6 +203,7 @@
     <ClCompile Include="..\..\kern\init_main.c" />
     <ClCompile Include="..\..\kern\kern_clock.c" />
     <ClCompile Include="..\..\kern\tty.c" />
+    <ClCompile Include="..\..\kern\tty_subr.c" />
     <ClCompile Include="..\..\kern\uipc_domain.c" />
     <ClCompile Include="..\..\kern\uipc_mbuf.c" />
     <ClCompile Include="..\..\kern\uipc_proto.c" />
