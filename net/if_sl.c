@@ -9,7 +9,9 @@
 #include "if_types.h"
 #include "..\sys\errno.h"
 #include "..\sys\time.h"
+#include "..\sys\sockio.h"
 #include <stddef.h>
+#include <string.h>
 
 #define NSL 32
 /*
@@ -88,6 +90,10 @@ struct sl_softc sl_softc[NSL];
 #define TRANS_FRAME_ESCAPE 	0xdd		/* transposed frame esc */
 
 extern int ifqmaxlen;
+
+static int slinit(struct sl_softc *sc);
+static struct mbuf *sl_btom(struct sl_softc *sc, int len);
+
 void slattach()
 {
     int i = 0;
@@ -184,7 +190,7 @@ void slinput(int c, struct tty *tp)
     struct ifnet *ifp = NULL;
     struct mbuf *m = NULL;
     struct ifqueue *ifq = NULL;
-    int len, s;
+    int len;
     u_char chdr[CHDR_LEN];
 
     tk_nin++;
@@ -300,7 +306,7 @@ void slinput(int c, struct tty *tp)
     sc->sc_flags |= SC_ERROR;
 
 error:
-    sc->sc_flags |= SC_ERROR;
+    sc->sc_if.if_ierrors++;
 
 newpack:
     sc->sc_mp = sc->sc_buf = sc->sc_ep - SLMAX;
@@ -377,7 +383,6 @@ void slstart(struct tty *tp)
     int len = 0;
     u_char bpfbuf[SLMTU + SLIP_HDRLEN];
 
-
     for (; ;)
     {
         if (tp->t_outq.c_cc != 0)
@@ -435,7 +440,6 @@ void slstart(struct tty *tp)
             sc->sc_if.if_collisions++;
             continue;
         }
-
 
         if (tp->t_outq.c_cc == 0)
         {
@@ -531,8 +535,28 @@ int sltioctl(struct tty *tp, int cmd, caddr_t data, int flag)
     return 0;
 }
 
-int slioctl(struct ifnet *ifnet, int cmd, caddr_t data)
+int slioctl(struct ifnet *ifp, int cmd, caddr_t data)
 {
-	return 0;
+    struct ifaddr *ifa = (struct ifaddr *)data;
+    struct ifreq *ifr;
+    int error = 0;
+
+    switch (cmd)
+    {
+    case SIOCSIFADDR:
+        if (ifa->ifa_addr->sa_family == AF_INET)
+            ifp->if_flags |= IFF_UP;
+        else
+            error = EAFNOSUPPORT;
+        break;
+    case SIOCSIFDSTADDR:
+        if (ifa->ifa_addr->sa_family != AF_INET)
+            error = EAFNOSUPPORT;
+        break;
+    default:
+        error = EINVAL;
+    }
+
+	return error;
 }
 
