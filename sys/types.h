@@ -35,6 +35,8 @@ typedef unsigned long u_long;
 
 typedef long mytime_t;
 
+#define	__P(protos)	protos		/* traditional C preprocessor */
+
 /*
  * Forward structure declarations for function prototypes.  We include the
  * common structures that cross subsystem boundaries here; others are mostly
