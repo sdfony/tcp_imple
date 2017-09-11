@@ -199,6 +199,7 @@
     <ClInclude Include="..\..\test.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\conf\param.c" />
     <ClCompile Include="..\..\hp300\dev\if_le.c" />
     <ClCompile Include="..\..\kern\init_main.c" />
     <ClCompile Include="..\..\kern\kern_clock.c" />
@@ -210,6 +211,7 @@
     <ClCompile Include="..\..\main.c" />
     <ClCompile Include="..\..\netinet\if_ether.c" />
     <ClCompile Include="..\..\netinet\in.c" />
+    <ClCompile Include="..\..\netinet\in_proto.c" />
     <ClCompile Include="..\..\netinet\ip_input.c" />
     <ClCompile Include="..\..\net\bpf.c" />
     <ClCompile Include="..\..\net\if.c" />

@@ -58,16 +58,16 @@
 * Address families.
 */
 #define	AF_UNSPEC	0		/* unspecified */
-#define	AF_LOCAL	AF_UNIX		/* local to host (pipes, portals) */
-#define	AF_UNIX		1		/* standardized name for AF_LOCAL */
+#define	AF_LOCAL	1		/* local to host (pipes, portals) */
+#define	AF_UNIX		AF_LOCAL	/* backward compatibility */
 #define	AF_INET		2		/* internetwork: UDP, TCP, etc. */
 #define	AF_IMPLINK	3		/* arpanet imp addresses */
 #define	AF_PUP		4		/* pup protocols: e.g. BSP */
 #define	AF_CHAOS	5		/* mit CHAOS protocols */
-#define	AF_NETBIOS	6		/* SMB protocols */
+#define	AF_NS		6		/* XEROX NS protocols */
 #define	AF_ISO		7		/* ISO protocols */
 #define	AF_OSI		AF_ISO
-#define	AF_ECMA		8		/* European computer manufacturers */
+#define	AF_ECMA		8		/* european computer manufacturers */
 #define	AF_DATAKIT	9		/* datakit protocols */
 #define	AF_CCITT	10		/* CCITT protocols, X.25 etc */
 #define	AF_SNA		11		/* IBM SNA */
@@ -84,25 +84,9 @@
 #define pseudo_AF_RTIP	22		/* Help Identify RTIP packets */
 #define	AF_IPX		23		/* Novell Internet Protocol */
 #define	AF_SIP		24		/* Simple Internet Protocol */
-#define	pseudo_AF_PIP	25		/* Help Identify PIP packets */
-#define	AF_ISDN		26		/* Integrated Services Digital Network*/
-#define	AF_E164		AF_ISDN		/* CCITT E.164 recommendation */
-#define	pseudo_AF_KEY	27		/* Internal key-management function */
-#define	AF_INET6	28		/* IPv6 */
-#define	AF_NATM		29		/* native ATM access */
-#define	AF_ATM		30		/* ATM */
-#define pseudo_AF_HDRCMPLT 31		/* Used by BPF to not rewrite headers
-* in interface output routine
-*/
-#define	AF_NETGRAPH	32		/* Netgraph sockets */
-#define	AF_SLOW		33		/* 802.3ad slow protocol */
-#define	AF_SCLUSTER	34		/* Sitara cluster protocol */
-#define	AF_ARP		35
-#define	AF_BLUETOOTH	36		/* Bluetooth sockets */
-#define	AF_IEEE80211	37		/* IEEE 802.11 protocol */
-#define	AF_INET_SDP	40		/* OFED Socket Direct Protocol ipv4 */
-#define	AF_INET6_SDP	42		/* OFED Socket Direct Protocol ipv6 */
-#define	AF_MAX		42
+#define pseudo_AF_PIP	25		/* Help Identify PIP packets */
+
+#define	AF_MAX		26
 
 struct sockaddr
 {
@@ -116,5 +100,48 @@ struct osockaddr
     u_short sa_family;
     char sa_data[14];
 };
+
+/*
+* Structure used by kernel to pass protocol
+* information in raw sockets.
+*/
+struct sockproto {
+    u_short	sp_family;		/* address family */
+    u_short	sp_protocol;		/* protocol */
+};
+
+/*
+* Protocol families, same as address families for now.
+*/
+#define	PF_UNSPEC	AF_UNSPEC
+#define	PF_LOCAL	AF_LOCAL
+#define	PF_UNIX		PF_LOCAL	/* backward compatibility */
+#define	PF_INET		AF_INET
+#define	PF_IMPLINK	AF_IMPLINK
+#define	PF_PUP		AF_PUP
+#define	PF_CHAOS	AF_CHAOS
+#define	PF_NS		AF_NS
+#define	PF_ISO		AF_ISO
+#define	PF_OSI		AF_ISO
+#define	PF_ECMA		AF_ECMA
+#define	PF_DATAKIT	AF_DATAKIT
+#define	PF_CCITT	AF_CCITT
+#define	PF_SNA		AF_SNA
+#define PF_DECnet	AF_DECnet
+#define PF_DLI		AF_DLI
+#define PF_LAT		AF_LAT
+#define	PF_HYLINK	AF_HYLINK
+#define	PF_APPLETALK	AF_APPLETALK
+#define	PF_ROUTE	AF_ROUTE
+#define	PF_LINK		AF_LINK
+#define	PF_XTP		pseudo_AF_XTP	/* really just proto family, no AF */
+#define	PF_COIP		AF_COIP
+#define	PF_CNT		AF_CNT
+#define	PF_SIP		AF_SIP
+#define	PF_IPX		AF_IPX		/* same format as AF_NS */
+#define PF_RTIP		pseudo_AF_FTIP	/* same format as AF_INET */
+#define PF_PIP		pseudo_AF_PIP
+
+#define	PF_MAX		AF_MAX
 
 #endif  // SOCKET_H

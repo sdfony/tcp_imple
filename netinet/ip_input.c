@@ -12,6 +12,7 @@
 #include "in_var.h"
 #include "ip_var.h"
 #include "../sys/protosw.h"
+#include "../sys/domain.h"
 
 /*#include "ip_icmp.h"*/
 /*#include "in_pcb.h"*/
@@ -56,13 +57,14 @@ int	ip_defttl = IPDEFTTL;
 int	ipprintfs = 0;
 #endif
 
+extern  struct ipq	ipq;			/* ip reass. queue */
 extern	struct domain inetdomain;
 extern	struct protosw inetsw[];
+
 u_char	ip_protox[IPPROTO_MAX];
 int	ipqmaxlen = IFQ_MAXLEN;
 struct	in_ifaddr *in_ifaddr;			/* first inet address */
 struct	ifqueue ipintrq;
-
 /*
  * We need to save the IP options in case a protocol wants to respond
  * to an incoming packet over the same route if the packet got here
@@ -78,7 +80,7 @@ static	struct ip_srcrt {
 	struct	in_addr route[MAX_IPOPTLEN/sizeof(struct in_addr)];
 } ip_srcrt;
 
-#ifdef GATEWAY
+#ifndef GATEWAY
 extern	int if_index;
 u_long	*ip_ifmatrix;
 #endif
@@ -91,6 +93,27 @@ static void save_rte __P((u_char *, struct in_addr));
 void
 ip_init()
 {
+    struct protosw *pr = pffindproto(PF_INET, IPPROTO_RAW, SOCK_RAW);
+    if (pr != NULL)
+        perror("canot find the protosw\n");
+
+    for (int i = 0; i < IPPROTO_MAX; i++)
+        ip_protox[i] = pr - inetdomain.dom_protosw;
+
+    for (struct protosw *p = inetdomain.dom_protosw;
+        p < inetdomain.dom_protoswNPROTOSW; p++)
+    {
+        if (p->pr_protocol != IPPROTO_RAW)
+            ip_protox[p->pr_protocol] = p - inetdomain.dom_protosw;
+    }
+
+    ipq.ipq_prev = ipq.ipq_next = &ipq;
+    ip_id = time.tv_sec & 0xffff;
+    int i = (if_index + 1) * (if_index + 1) * sizeof(u_long);
+    ip_ifmatrix = malloc(i);
+    memset(ip_ifmatrix, 0, i);
+  
+    ipintrq.ifq_maxlen = ipqmaxlen;
 }
 
 struct	sockaddr_in ipaddr = { sizeof(ipaddr), AF_INET };

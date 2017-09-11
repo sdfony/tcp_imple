@@ -33,8 +33,8 @@
 #endif /* !__cplusplus */
 
 #else	/* !(__STDC__ || __cplusplus) */
-#define	__P(protos)	protos		/* traditional C preprocessor */
-#define	__CONCAT(x,y)	x/**/y
+ //#define	__P(protos)	protos		/* traditional C preprocessor */
+#define	__CONCAT(x,y)	x##y
 #define	__STRING(x)	"x"
 
 #ifndef __GNUC__

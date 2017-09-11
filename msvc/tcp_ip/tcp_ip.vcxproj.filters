@@ -73,6 +73,9 @@
     <Filter Include="Header Files\stand">
       <UniqueIdentifier>{f4eb0053-8aaf-4622-97e3-0008f4a3ea36}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\conf">
+      <UniqueIdentifier>{bb9f878b-3c78-4b0f-8c18-009045661705}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\net\bpf.h">
@@ -343,6 +346,12 @@
     </ClCompile>
     <ClCompile Include="..\..\kern\tty_subr.c">
       <Filter>Source Files\kern</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\netinet\in_proto.c">
+      <Filter>Source Files\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\conf\param.c">
+      <Filter>Source Files\conf</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

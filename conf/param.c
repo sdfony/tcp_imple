@@ -2,10 +2,10 @@
 #include "../sys/systm.h"
 #include "../sys/socket.h"
 #include "../sys/proc.h"
-#include "../sys/vnode.h"
+//#include "../sys/vnode.h"
 #include "../sys/file.h"
 #include "../sys/callout.h"
-#include "../sys/clist.h"
+//#include "../sys/clist.h"
 #include "../sys/mbuf.h"
 #include "../sys/kernel.h"
 
@@ -32,15 +32,15 @@
 int	hz = HZ;
 int	tick = 1000000 / HZ;
 int	tickadj = 30000 / (60 * HZ);		/* can adjust 30ms in 60s */
-struct	timezone tz = { TIMEZONE, DST };
-#define	NPROC (20 + 16 * MAXUSERS)
-int	maxproc = NPROC;
-#define	NTEXT (80 + NPROC / 8)			/* actually the object cache */
-#define	NVNODE (NPROC + NTEXT + 100)
-int	desiredvnodes = NVNODE;
-int	maxfiles = 3 * (NPROC + MAXUSERS) + 80;
-int	ncallout = 16 + NPROC;
-int	nclist = 60 + 12 * MAXUSERS;
+//struct	timezone tz = { TIMEZONE, DST };
+//#define	NPROC (20 + 16 * MAXUSERS)
+//int	maxproc = NPROC;
+//#define	NTEXT (80 + NPROC / 8)			/* actually the object cache */
+//#define	NVNODE (NPROC + NTEXT + 100)
+//int	desiredvnodes = NVNODE;
+//int	maxfiles = 3 * (NPROC + MAXUSERS) + 80;
+//int	ncallout = 16 + NPROC;
+//int	nclist = 60 + 12 * MAXUSERS;
 int	nmbclusters = NMBCLUSTERS;
 int	fscale = FSCALE;	/* kernel uses `FSCALE', user uses `fscale' */
 

@@ -111,7 +111,7 @@ struct	ipstat {
 	u_long	ips_rawout;		/* total raw ip packets generated */
 };
 
-#ifdef KERNEL
+#ifndef KERNEL
 /* flags passed to ip_output as last parameter */
 #define	IP_FORWARDING		0x1		/* most of ip header exists */
 #define	IP_RAWOUTPUT		0x2		/* raw ip header exists */
